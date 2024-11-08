@@ -16,6 +16,10 @@ public class Product {
         this.quantity = quantity;
     }
 
+    public String name() {
+        return name;
+    }
+
     public BigInteger quantity() {
         return quantity;
     }
