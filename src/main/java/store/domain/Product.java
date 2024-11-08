@@ -4,13 +4,13 @@ import java.math.BigInteger;
 
 import static store.common.ExceptionCode.QUANTITY_SHORTAGE;
 
-public class Stock {
+public class Product {
 
     private final String name;
     private final Long price;
     private BigInteger quantity;
 
-    public Stock(String name, Long price, BigInteger quantity) {
+    public Product(String name, Long price, BigInteger quantity) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
