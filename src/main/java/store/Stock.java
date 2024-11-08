@@ -2,6 +2,8 @@ package store;
 
 import java.math.BigInteger;
 
+import static store.common.ExceptionCode.QUANTITY_SHORTAGE;
+
 public class Stock {
 
     private final String name;
@@ -20,7 +22,7 @@ public class Stock {
 
     public void deduct(BigInteger number) {
         if (quantity.compareTo(number) < 0) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(QUANTITY_SHORTAGE.message);
         }
         quantity = quantity.subtract(number);
     }

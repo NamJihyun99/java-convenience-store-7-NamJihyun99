@@ -7,6 +7,7 @@ import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static store.common.ExceptionCode.QUANTITY_SHORTAGE;
 
 public class StockTest {
 
@@ -23,6 +24,7 @@ public class StockTest {
     void 재고_부족() {
         Stock stock = new Stock("콜라",1000L,BigInteger.TEN);
         assertThatThrownBy(() -> stock.deduct(BigInteger.valueOf(20)))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining(QUANTITY_SHORTAGE.message);
     }
 }
