@@ -12,7 +12,7 @@
 
 ### **재고 관리**
 
-- [ ] 재고 정보는 src/main/resources/products.md 파일로부터 읽어 온다.
+- [x] 재고 정보는 src/main/resources/products.md 파일로부터 읽어 온다.
 - [ ] 각 상품의 재고 수량을 고려하여 결제 가능 여부를 확인한다.
 - [x] 고객이 상품을 구매할 때마다, 결제된 수량만큼 해당 상품의 재고에서 차감하여 수량을 관리한다.
   - 재고가 부족할 경우 `IllegalStateException`을 발생시킨다.  
