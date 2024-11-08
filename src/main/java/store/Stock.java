@@ -1,25 +1,27 @@
 package store;
 
+import java.math.BigInteger;
+
 public class Stock {
 
     private final String name;
-    private final int price;
-    private int quantity;
+    private final Long price;
+    private BigInteger quantity;
 
-    public Stock(String name, int price, int quantity) {
+    public Stock(String name, Long price, BigInteger quantity) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
     }
 
-    public int quantity() {
+    public BigInteger quantity() {
         return quantity;
     }
 
-    public void deduct(int number) {
-        if (quantity < number) {
+    public void deduct(BigInteger number) {
+        if (quantity.compareTo(number) < 0) {
             throw new IllegalStateException();
         }
-        quantity -= number;
+        quantity = quantity.subtract(number);
     }
 }
