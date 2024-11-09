@@ -7,24 +7,27 @@ import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static store.common.ExceptionCode.QUANTITY_SHORTAGE;
+import static store.common.ExceptionCode.PROMOTION_EXCEED;
 
 public class ProductTest {
 
-    @DisplayName("구매한 상품의 개수를 받아 상품의 재고가 충분할 경우 재고를 차감한다.")
+    @DisplayName("새로운 프로모션 추가 성공")
     @Test
-    void 재고_차감_성공() {
-        Product product = new Product("콜라",1000L,BigInteger.TEN);
-        product.deduct(BigInteger.TWO);
-        assertThat(product.quantity()).isEqualTo(BigInteger.valueOf(8));
+    void addPromotion_Success() {
+        Product product = new Product("콜라");
+        product.addInventory(new Inventory(1000L, BigInteger.TEN, Promotion.of()));
+        assertThat(product.inventories().size()).isEqualTo(1);
     }
 
-    @DisplayName("구매한 상품의 개수를 받아 상품의 재고가 부족할 경우 예외가 발생한다.")
+    @DisplayName("적용된 프로모션이 2개 이상이면 예외를 발생한다")
     @Test
-    void 재고_부족() {
-        Product product = new Product("콜라",1000L,BigInteger.TEN);
-        assertThatThrownBy(() -> product.deduct(BigInteger.valueOf(20)))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining(QUANTITY_SHORTAGE.message);
+    void addPromotion_Exceed() {
+        Product product = new Product("콜라");
+        product.addInventory(new Inventory(1000L, BigInteger.TEN, Promotion.of()));
+        product.addInventory(new Inventory(1000L, BigInteger.TEN, Promotion.of()));
+        assertThatThrownBy(() -> product.addInventory(new Inventory(1000L, BigInteger.TEN, Promotion.of())))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(PROMOTION_EXCEED.message);
     }
+
 }

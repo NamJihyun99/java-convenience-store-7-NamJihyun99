@@ -1,33 +1,43 @@
 package store.domain;
 
-import java.math.BigInteger;
+import store.common.ExceptionCode;
 
-import static store.common.ExceptionCode.QUANTITY_SHORTAGE;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Product {
 
     private final String name;
-    private final Long price;
-    private BigInteger quantity;
+    private final List<Inventory> inventories = new ArrayList<>();
 
-    public Product(String name, Long price, BigInteger quantity) {
+    public Product(String name) {
+        validateName(name);
         this.name = name;
-        this.price = price;
-        this.quantity = quantity;
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException(ExceptionCode.NAME_BLANK.message);
+        }
     }
 
     public String name() {
         return name;
     }
 
-    public BigInteger quantity() {
-        return quantity;
+    public void addInventory(Inventory inventory) {
+        validateInventories(this.inventories);
+        this.inventories.add(inventory);
     }
 
-    public void deduct(BigInteger number) {
-        if (quantity.compareTo(number) < 0) {
-            throw new IllegalStateException(QUANTITY_SHORTAGE.message);
+    private void validateInventories(List<Inventory> inventories) {
+        if (inventories == null || inventories.size() == 2) {
+            throw new IllegalArgumentException(ExceptionCode.PROMOTION_EXCEED.message);
         }
-        quantity = quantity.subtract(number);
     }
+
+    public List<Inventory> inventories() {
+        return this.inventories;
+    }
+
 }
