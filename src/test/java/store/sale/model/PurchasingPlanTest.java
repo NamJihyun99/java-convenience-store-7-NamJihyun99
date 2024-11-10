@@ -1,4 +1,4 @@
-package store.sale.domain;
+package store.sale.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,6 +7,7 @@ import store.domain.Product;
 import store.domain.Promotion;
 import store.sale.common.DateTime;
 import store.sale.common.FixedDateTime;
+import store.sale.domain.Order;
 import store.sale.view.ProductAmountDto;
 
 import java.math.BigInteger;
@@ -77,6 +78,23 @@ class PurchasingPlanTest {
                 List.of(new Order(product, BigInteger.valueOf(3)))
         );
         assertThat(plan.getGetTotal()).isEqualTo(0L);
+    }
+
+    @DisplayName("프로모션 적용 상품만 구입하려는 경우 미적용 상품은 모두 지운다")
+    @Test
+    void 프로모션_미적용_상품_모두_삭제() {
+        Product product = new Product("콜라", 1000L);
+        product.setQuantity(BigInteger.TEN);
+        Promotion promotion = Promotion.create("탄산2+1",
+                BigInteger.TWO, BigInteger.ONE,
+                LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"));
+        product.setPromotionInventory(new Inventory(BigInteger.valueOf(7), promotion));
+        PurchasingPlan plan = new PurchasingPlan(
+                testDateTime(),
+                List.of(new Order(product, BigInteger.valueOf(10)))
+        );
+        plan.subtractNonPromotions("콜라");
+        assertThat(plan.getTotal()).isEqualTo(6000L);
     }
 
     DateTime testDateTime() {

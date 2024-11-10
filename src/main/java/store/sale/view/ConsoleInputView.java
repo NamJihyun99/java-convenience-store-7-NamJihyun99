@@ -12,22 +12,22 @@ public class ConsoleInputView {
     }
 
     public String readPromotionYn(ProductAmountDto dto) {
-        System.out.println(PromptMessage.askPromotion(dto.name(), dto.amount()));
+        System.out.println("\n"+PromptMessage.askPromotion(dto.name(), dto.amount()));
         return readInput();
     }
 
     public String readNonPromotionYn(String productName, BigInteger quantity) {
-        System.out.println(PromptMessage.askNonPromotion(productName, quantity));
+        System.out.println("\n"+PromptMessage.askNonPromotion(productName, quantity));
         return readInput();
     }
 
     public String readMembershipYn() {
-        System.out.println(PromptMessage.askMembership());
+        System.out.println("\n"+PromptMessage.askMembership());
         return readInput();
     }
 
     public String readNextTurnYn() {
-        System.out.println(PromptMessage.askNextTurn());
+        System.out.println("\n"+PromptMessage.askNextTurn());
         return readInput();
     }
 

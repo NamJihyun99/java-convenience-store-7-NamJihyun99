@@ -2,7 +2,7 @@ package store.sale.controller;
 
 import store.sale.common.DateTime;
 import store.sale.domain.Order;
-import store.sale.domain.PurchasingPlan;
+import store.sale.model.PurchasingPlan;
 import store.sale.service.SaleService;
 import store.sale.view.ConsoleInputView;
 import store.sale.view.OrderRequestParser;
@@ -49,6 +49,14 @@ public class SaleController {
                     plan.addFreeGet(dto);
                 }
             }
+            plan.promotionQuantityShortages().forEach(dto -> {
+                if (readNonPromotion(dto).equals("N")) {
+                    plan.subtractNonPromotions(dto.name());
+                }
+            });
+            if (readMembership().equals("Y")) {
+                plan.applyMembership();
+            }
         } while (readContinueYn().equals("Y"));
     }
 
@@ -65,6 +73,22 @@ public class SaleController {
             String orderRequest = inputView.readOrderRequest();
             validateOrderRequest(orderRequest);
             return orderRequest;
+        });
+    }
+
+    private String readNonPromotion(ProductAmountDto shortage) {
+        return retryUntilValid(() -> {
+            String response = inputView.readNonPromotionYn(shortage.name(), shortage.amount());
+            validateYn(response);
+            return response;
+        });
+    }
+
+    private String readMembership() {
+        return retryUntilValid(() -> {
+            String response = inputView.readMembershipYn();
+            validateYn(response);
+            return response;
         });
     }
 

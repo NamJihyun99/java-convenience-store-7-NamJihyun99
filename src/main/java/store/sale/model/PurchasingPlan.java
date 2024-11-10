@@ -1,12 +1,14 @@
-package store.sale.domain;
+package store.sale.model;
 
 import store.domain.Inventory;
 import store.domain.Product;
 import store.domain.Promotion;
 import store.sale.common.DateTime;
+import store.sale.domain.Order;
 import store.sale.view.ProductAmountDto;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +18,12 @@ import static store.sale.common.SaleExceptionCode.PROMOTION_UNABLE;
 
 public class PurchasingPlan {
 
+    private static final BigInteger DISCOUNT_PERCENTAGE = BigInteger.valueOf(30);
+    private static final BigInteger DISCOUNT_MAX = BigInteger.valueOf(8000);
+
     private final DateTime dateTime;
     private final Map<String, Form> forms = new HashMap<>();
+    private boolean discountable = false;
 
     public PurchasingPlan(DateTime dateTime, List<Order> orders) {
         this.dateTime = dateTime;
@@ -30,10 +36,34 @@ public class PurchasingPlan {
         });
     }
 
+    public void applyMembership() {
+        discountable = true;
+    }
+
     public void addFreeGet(ProductAmountDto dto) {
         Form form = forms.get(dto.name());
         form.addExtraNonPromotionAmount(dto.amount());
         form.addPromotionAmount(form.product.getPromotionQuantity(form.nonPromotionAmount, dateTime));
+    }
+
+    public void addNonPromotion(ProductAmountDto dto) {
+        Form form = forms.get(dto.name());
+        form.subtractPromotionAmount(dto.amount());
+    }
+
+    public void subtractNonPromotions(String productName) {
+        Form form = forms.get(productName);
+        form.nonPromotionAmount = BigInteger.ZERO;
+    }
+
+    public List<ProductAmountDto> promotionQuantityShortages() {
+        List<ProductAmountDto> dtos = new ArrayList<>();
+        forms.values().stream()
+                .filter(form -> form.product.getPromotionInventory().isPresent())
+                .forEach(form ->
+                        dtos.add(new ProductAmountDto(form.product.name(), form.nonPromotionAmount))
+                );
+        return dtos;
     }
 
     public BigInteger getTotal() {
@@ -48,6 +78,25 @@ public class PurchasingPlan {
         BigInteger sum = BigInteger.ZERO;
         for (Form form : forms.values()) {
             sum = sum.add(form.getGetPrice());
+        }
+        return sum;
+    }
+
+    public BigInteger getMembershipDiscount() {
+        if (discountable) {
+            BigInteger discount = getNonPromotionTotal().multiply(DISCOUNT_PERCENTAGE).divide(BigInteger.valueOf(100));
+            if (discount.compareTo(DISCOUNT_MAX) > 0) {
+                return DISCOUNT_MAX;
+            }
+            return discount;
+        }
+        return BigInteger.ZERO;
+    }
+
+    private BigInteger getNonPromotionTotal() {
+        BigInteger sum = BigInteger.ZERO;
+        for (Form form : forms.values()) {
+            sum = sum.add(form.getNonPromotionPrice());
         }
         return sum;
     }
@@ -73,7 +122,7 @@ public class PurchasingPlan {
             this.nonPromotionAmount = this.nonPromotionAmount.subtract(totalAmount);
         }
 
-        void subtractPromotionAmount(BigInteger totalAmount, DateTime dateTime) {
+        void subtractPromotionAmount(BigInteger totalAmount) {
             Promotion promotion = validPromotion(totalAmount);
             BigInteger divide = totalAmount.divide(promotion.buy().add(promotion.get()));
             this.promotionBuyAmount = this.promotionBuyAmount.subtract(promotion.buy().multiply(divide));
@@ -109,6 +158,10 @@ public class PurchasingPlan {
                 sum = sum.add(promotionGetAmount).multiply(BigInteger.valueOf(product.price()));
             }
             return sum;
+        }
+
+        BigInteger getNonPromotionPrice() {
+            return nonPromotionAmount.multiply(BigInteger.valueOf(product.price()));
         }
     }
 }
