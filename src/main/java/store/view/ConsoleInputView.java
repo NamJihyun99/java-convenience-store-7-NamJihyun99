@@ -4,7 +4,7 @@ import camp.nextstep.edu.missionutils.Console;
 
 import java.math.BigInteger;
 
-public class InputView {
+public class ConsoleInputView {
 
     public String readOrderRequest() {
         System.out.println(PromptMessage.orderRequest());

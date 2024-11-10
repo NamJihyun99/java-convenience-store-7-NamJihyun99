@@ -16,7 +16,7 @@ public class PromotionCsvFileParser implements FileParser<PromotionSaveDto> {
     private static final String delimiter = ",";
 
     @Override
-    public List<PromotionSaveDto> parse(String filePath) throws Exception {
+    public List<PromotionSaveDto> parse(String filePath) throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             validateFieldSize(readFields(bufferedReader).size());
             return getPromotionSaveDtos(bufferedReader);

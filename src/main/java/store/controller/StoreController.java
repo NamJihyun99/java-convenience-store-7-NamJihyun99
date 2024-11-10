@@ -1,31 +1,37 @@
 package store.controller;
 
 import store.common.DateTimeGenerator;
-import store.common.InputValidationExceptionCode;
+import store.file.dto.ProductSaveDto;
+import store.service.ProductService;
 import store.service.StoreService;
-import store.view.InputView;
+import store.view.ConsoleInputView;
+import store.view.FileInputView;
 import store.view.OutputView;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import static store.common.InputValidationExceptionCode.INCORRECT_FORMAT;
 
 public class StoreController {
 
-    private final InputView inputView;
+    private final ConsoleInputView consoleInputView;
     private final OutputView outputView;
     private final StoreService storeService;
     private final DateTimeGenerator dateTimeGenerator;
 
-    private StoreController(InputView inputView, OutputView outputView, StoreService storeService, DateTimeGenerator dateTimeGenerator) {
-        this.inputView = inputView;
+    private StoreController(ConsoleInputView consoleInputView,
+                            OutputView outputView,
+                            StoreService storeService,
+                            DateTimeGenerator dateTimeGenerator) {
+        this.consoleInputView = consoleInputView;
         this.outputView = outputView;
         this.storeService = storeService;
         this.dateTimeGenerator = dateTimeGenerator;
     }
 
-    public static StoreController create(InputView inputView, OutputView outputView, StoreService storeService, DateTimeGenerator dateTimeGenerator) {
-        return new StoreController(inputView, outputView, storeService, dateTimeGenerator);
+    public static StoreController create(ConsoleInputView consoleInputView, OutputView outputView, StoreService storeService, DateTimeGenerator dateTimeGenerator) {
+        return new StoreController(consoleInputView, outputView, storeService, dateTimeGenerator);
     }
 
     public void run() {
@@ -36,7 +42,7 @@ public class StoreController {
 
     private String readContinueYn() {
         return retryUntilValid(() -> {
-            String continueYn = inputView.readNextTurnYn();
+            String continueYn = consoleInputView.readNextTurnYn();
             validateYn(continueYn);
             return continueYn;
         });
