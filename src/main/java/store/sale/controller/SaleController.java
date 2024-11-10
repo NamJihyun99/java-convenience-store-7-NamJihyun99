@@ -2,10 +2,12 @@ package store.sale.controller;
 
 import store.sale.common.DateTimeGenerator;
 import store.sale.domain.Order;
+import store.sale.domain.PurchasingPlan;
 import store.sale.service.SaleService;
 import store.sale.view.ConsoleInputView;
 import store.sale.view.OrderRequestParser;
 import store.sale.view.OutputView;
+import store.sale.view.ProductAmountDto;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -39,7 +41,23 @@ public class SaleController {
             outputView.printProducts(saleService.readProducts());
             List<List<String>> tokens = OrderRequestParser.parse(readOrderRequest());
             List<Order> orders = saleService.createOrders(tokens);
+            PurchasingPlan plan = new PurchasingPlan(orders);
+            List<ProductAmountDto> extraGets = saleService.getEnableProduct(orders);
+            for (ProductAmountDto dto : extraGets) {
+                String response = readExtraGet(dto);
+                if (response.equals("Y")) {
+                    plan.addFreeGet(dto);
+                }
+            }
         } while (readContinueYn().equals("Y"));
+    }
+
+    private String readExtraGet(ProductAmountDto extraGet) {
+        return retryUntilValid(() -> {
+            String response = inputView.readPromotionYn(extraGet);
+            validateYn(response);
+            return response;
+        });
     }
 
     private String readOrderRequest() {

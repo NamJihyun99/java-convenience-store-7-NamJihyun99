@@ -31,9 +31,10 @@ public class ProductResponseDto {
 
     public static List<ProductResponseDto> create(Product product) {
         List<ProductResponseDto> dtos = new ArrayList<>();
-        for (Inventory inventory: product.inventories()) {
-            dtos.add(new ProductResponseDto(product.name(), inventory.price(), inventory.quantity(), inventory.promotion().name()));
-        }
+        product.getPromotionInventory().ifPresent(inventory ->
+                dtos.add(new ProductResponseDto(product.name(), product.price(), inventory.quantity(), inventory.promotion().name()))
+        );
+        dtos.add(new ProductResponseDto(product.name(), product.price(), product.quantity(), ""));
         return dtos;
     }
 

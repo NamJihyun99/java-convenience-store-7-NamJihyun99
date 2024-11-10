@@ -1,7 +1,6 @@
 package store.repository;
 
 import org.junit.jupiter.api.*;
-import store.domain.BuyNGetOneFree;
 import store.domain.Promotion;
 
 import java.math.BigInteger;
@@ -26,21 +25,21 @@ class MemoryPromotionRepositoryTest {
     @DisplayName("프로모션을 Map에 저장한다")
     @Test
     void save() {
-        BuyNGetOneFree promotion = BuyNGetOneFree.create("탄산2+1",
+        Promotion promotion = Promotion.create("탄산2+1",
                 BigInteger.TWO, BigInteger.ONE,
                 LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"));
         Promotion saved = repository.save(promotion);
-        assertThat(repository.count()).isEqualTo(2);
+        assertThat(repository.count()).isEqualTo(1);
     }
 
     @DisplayName("Map에서 이름으로 프로모션을 찾는다")
     @Test
     void findByName() {
         String name = "탄산2+1";
-        BuyNGetOneFree promotion = BuyNGetOneFree.create(name,
+        Promotion promotion = Promotion.create(name,
                 BigInteger.TWO, BigInteger.ONE,
                 LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"));
         Promotion saved = repository.save(promotion);
-        assertThat(repository.findByName(name)).isEqualTo(saved);
+        assertThat(repository.findByName(name).get()).isEqualTo(saved);
     }
 }

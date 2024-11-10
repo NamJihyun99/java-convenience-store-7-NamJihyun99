@@ -8,6 +8,9 @@ import store.repository.PromotionRepository;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
+
+import static store.sale.common.SaleExceptionCode.PROMOTION_NOT_FOUND;
 
 public class ProductService {
 
@@ -24,23 +27,16 @@ public class ProductService {
                 .map(PromotionSaveDto::of)
                 .map(promotionRepository::save)
                 .toList();
-
         return BigInteger.valueOf(promotions.size());
     }
 
     public BigInteger saveProducts(List<ProductSaveDto> dtos) {
         for (ProductSaveDto dto : dtos) {
-            Product product = ProductSaveDto.createProduct(productRepository.findByName(dto.name), dto, promotionRepository.findByName(dto.promotion));
+            Optional<Promotion> promotion = promotionRepository.findByName(dto.promotion);
+            Product product = ProductSaveDto.createProduct(productRepository.findByName(dto.name), dto, promotion);
             productRepository.save(product);
         }
-        List<Product> products = productRepository.findAll();
-        for (Product product : products) {
-            List<Inventory> inventories = product.inventories();
-            if (inventories.size() == 1 && (inventories.getFirst().promotion() instanceof BuyNGetOneFree)) {
-                product.addInventory(new Inventory(inventories.getFirst().price(), BigInteger.ZERO, NonePromotion.getInstance()));
-            }
-        }
-
+        System.out.println("저장된 상품 개수: "+ productRepository.count());
         return productRepository.count();
     }
 }

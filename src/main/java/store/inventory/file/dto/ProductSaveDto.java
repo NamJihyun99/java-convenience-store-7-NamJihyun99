@@ -66,9 +66,10 @@ public class ProductSaveDto implements SaveDto {
         }
     }
 
-    public static Product createProduct(Optional<Product> result, ProductSaveDto dto, Promotion promotion) {
-        Product product = result.orElse(new Product(dto.name));
-        product.addInventory(new Inventory(dto.price, dto.quantity, promotion));
+    public static Product createProduct(Optional<Product> result, ProductSaveDto dto, Optional<Promotion> nullablePromotion) {
+        Product product = result.orElse(new Product(dto.name, dto.price));
+        nullablePromotion.ifPresentOrElse(promotion -> product.setPromotionInventory(new Inventory(dto.price, dto.quantity, promotion)),
+                () -> product.setQuantity(dto.quantity));
         return product;
     }
 

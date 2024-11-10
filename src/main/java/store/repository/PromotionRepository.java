@@ -3,10 +3,11 @@ package store.repository;
 import store.domain.Promotion;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
 public interface PromotionRepository {
 
     Promotion save(Promotion promotion);
-    Promotion findByName(String name);
+    Optional<Promotion> findByName(String name);
     BigInteger count();
 }

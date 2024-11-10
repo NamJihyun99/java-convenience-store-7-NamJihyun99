@@ -2,17 +2,22 @@ package store.domain;
 
 import store.inventory.common.ExceptionCode;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigInteger;
+import java.util.Optional;
 
 public class Product {
 
-    private final String name;
-    private final List<Inventory> inventories = new ArrayList<>();
 
-    public Product(String name) {
+    private final String name;
+    private final Long price;
+    private BigInteger quantity;
+    private Inventory promotionInventory;
+
+    public Product(String name, Long price) {
         validateName(name);
         this.name = name;
+        this.price = price;
+        this.quantity = BigInteger.ZERO;
     }
 
     private void validateName(String name) {
@@ -25,19 +30,24 @@ public class Product {
         return name;
     }
 
-    public void addInventory(Inventory inventory) {
-        validateInventories(this.inventories);
-        this.inventories.add(inventory);
+    public BigInteger quantity() {
+        return quantity;
     }
 
-    private void validateInventories(List<Inventory> inventories) {
-        if (inventories == null || inventories.size() == 2) {
-            throw new IllegalArgumentException(ExceptionCode.PROMOTION_EXCEED.message);
-        }
+    public Long price() {
+        return price;
     }
 
-    public List<Inventory> inventories() {
-        return this.inventories;
+    public void setQuantity(BigInteger quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setPromotionInventory(Inventory inventory) {
+        this.promotionInventory = inventory;
+    }
+
+    public Optional<Inventory> getPromotionInventory() {
+        return Optional.ofNullable(this.promotionInventory);
     }
 
 }

@@ -25,7 +25,7 @@ class MemoryProductRepositoryTest {
     @DisplayName("상품을 Map에 저장한다")
     @Test
     void save() {
-        Product product = new Product("사이다");
+        Product product = new Product("사이다", 1000L);
         repository.save(product);
         assertThat(repository.count()).isEqualTo(1);
     }
@@ -33,7 +33,7 @@ class MemoryProductRepositoryTest {
     @DisplayName("Map에서 이름으로 상품을 찾는다")
     @Test
     void findByName() {
-        Product product = new Product("사이다");
+        Product product = new Product("사이다", 1000L);
         Product saved = repository.save(product);
         assertThat(repository.findByName("사이다").get()).isEqualTo(saved);
     }

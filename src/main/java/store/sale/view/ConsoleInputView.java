@@ -11,8 +11,8 @@ public class ConsoleInputView {
         return readInput();
     }
 
-    public String readPromotionYn(String productName, BigInteger quantity) {
-        System.out.println(PromptMessage.askPromotion(productName, quantity));
+    public String readPromotionYn(ProductAmountDto dto) {
+        System.out.println(PromptMessage.askPromotion(dto.name(), dto.amount()));
         return readInput();
     }
 

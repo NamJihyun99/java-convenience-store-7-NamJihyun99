@@ -1,9 +1,17 @@
 package store.domain;
 
-public class NonePromotion extends Promotion {
+import java.math.BigInteger;
+
+public class NonePromotion {
+
+    private final String name;
+    private final BigInteger buy;
+    private final BigInteger get;
 
     private NonePromotion() {
-        super("");
+        this.name = "";
+        this.buy = BigInteger.ONE;
+        this.get = BigInteger.ZERO;
     }
 
     public static NonePromotion getInstance() {

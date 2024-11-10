@@ -1,6 +1,5 @@
 package store.inventory.file.dto;
 
-import store.domain.BuyNGetOneFree;
 import store.domain.Promotion;
 
 import java.math.BigInteger;
@@ -78,7 +77,7 @@ public class PromotionSaveDto implements SaveDto{
     }
 
     public static Promotion of(PromotionSaveDto dto) {
-        return BuyNGetOneFree.create(dto.name, dto.buy, dto.get, dto.startDate, dto.endDate);
+        return Promotion.create(dto.name, dto.buy, dto.get, dto.startDate, dto.endDate);
     }
 
     @Override

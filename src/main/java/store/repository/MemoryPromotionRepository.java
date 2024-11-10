@@ -1,21 +1,17 @@
 package store.repository;
 
-import store.domain.NonePromotion;
 import store.domain.Promotion;
 
 import java.math.BigInteger;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryPromotionRepository implements PromotionRepository {
 
     private static final Map<String, Promotion> promotions = new ConcurrentHashMap<>();
 
-    private MemoryPromotionRepository() {
-        if (promotions.isEmpty()) {
-            promotions.put("null", NonePromotion.getInstance());
-        }
-    }
+    private MemoryPromotionRepository() {}
 
     public static MemoryPromotionRepository getInstance() {
         return new MemoryPromotionRepository();
@@ -28,8 +24,8 @@ public class MemoryPromotionRepository implements PromotionRepository {
     }
 
     @Override
-    public Promotion findByName(String name) {
-        return promotions.get(name);
+    public Optional<Promotion> findByName(String name) {
+        return Optional.ofNullable(promotions.get(name));
     }
 
     @Override
