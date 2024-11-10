@@ -26,6 +26,11 @@ public class InputView {
         return readInput();
     }
 
+    public String readNextTurnYn() {
+        System.out.println(PromptMessage.askNextTurn());
+        return readInput();
+    }
+
     private String readInput() {
         return Console.readLine();
     }
