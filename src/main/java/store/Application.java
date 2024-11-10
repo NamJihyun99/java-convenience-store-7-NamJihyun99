@@ -30,7 +30,7 @@ public class Application {
     private static void runStore() {
         ConsoleInputView consoleInputView = new ConsoleInputView();
         OutputView outputView = new OutputView();
-        SaleService service = new SaleService();
+        SaleService service = new SaleService(MemoryProductRepository.getInstance(), MemoryPromotionRepository.getInstance());
         DateTimeGenerator dateTimeGenerator = new FixedDateTimeGenerator();
         SaleController controller = SaleController.create(consoleInputView, outputView, service, dateTimeGenerator);
         controller.run();

@@ -2,7 +2,6 @@ package store.inventory.file;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import store.inventory.file.ProductCsvFileParser;
 import store.inventory.file.dto.ProductSaveDto;
 
 import java.math.BigInteger;
@@ -21,15 +20,7 @@ class ProductCsvFileParserTest {
         assertThat(result.size()).isEqualTo(5);
     }
 
-    @DisplayName("products.md 파일 상품목록의 프로모션이 'null'인 경우 null을 할당한다")
-    @Test
-    void 상품_프로모션_null_할당() throws Exception {
-        ProductCsvFileParser parser = new ProductCsvFileParser();
-        List<ProductSaveDto> result = parser.parse("src/test/resources/products.md");
-        assertThat(result.get(1).promotion).isNull();
-    }
-
-    @DisplayName("products.md 파일 상품목록의 price의 타입은 BigInteger다")
+    @DisplayName("products.md 파일 상품목록의 price의 타입은 Long이다")
     @Test
     void 상품_가격_타입() throws Exception {
         ProductCsvFileParser parser = new ProductCsvFileParser();

@@ -29,8 +29,8 @@ public class BuyNGetOneFree extends Promotion {
     }
 
     private static void validateName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException(NAME_BLANK.message);
+        if (name == null || name.isBlank() || name.equals("null")) {
+            throw new IllegalArgumentException(INCORRECT_NAME.message);
         }
     }
 

@@ -11,7 +11,7 @@ import static store.sale.common.InputValidationExceptionCode.INCORRECT_FORMAT;
 
 public class SaleController {
 
-    private final ConsoleInputView consoleInputView;
+    private final ConsoleInputView inputView;
     private final OutputView outputView;
     private final SaleService saleService;
     private final DateTimeGenerator dateTimeGenerator;
@@ -20,7 +20,7 @@ public class SaleController {
                            OutputView outputView,
                            SaleService saleService,
                            DateTimeGenerator dateTimeGenerator) {
-        this.consoleInputView = consoleInputView;
+        this.inputView = consoleInputView;
         this.outputView = outputView;
         this.saleService = saleService;
         this.dateTimeGenerator = dateTimeGenerator;
@@ -32,13 +32,13 @@ public class SaleController {
 
     public void run() {
         do {
-            //
+            outputView.printProducts(saleService.readProducts());
         } while (readContinueYn().equals("Y"));
     }
 
     private String readContinueYn() {
         return retryUntilValid(() -> {
-            String continueYn = consoleInputView.readNextTurnYn();
+            String continueYn = inputView.readNextTurnYn();
             validateYn(continueYn);
             return continueYn;
         });

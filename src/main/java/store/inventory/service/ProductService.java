@@ -1,6 +1,6 @@
 package store.inventory.service;
 
-import store.domain.Promotion;
+import store.domain.*;
 import store.inventory.file.dto.ProductSaveDto;
 import store.inventory.file.dto.PromotionSaveDto;
 import store.repository.ProductRepository;
@@ -24,17 +24,23 @@ public class ProductService {
                 .map(PromotionSaveDto::of)
                 .map(promotionRepository::save)
                 .toList();
+
         return BigInteger.valueOf(promotions.size());
     }
 
     public BigInteger saveProducts(List<ProductSaveDto> dtos) {
-        dtos.forEach(dto ->
-                ProductSaveDto.createProduct(
-                        productRepository.findByName(dto.name),
-                        dto,
-                        promotionRepository.findByName(dto.promotion)
-                )
-        );
+        for (ProductSaveDto dto : dtos) {
+            Product product = ProductSaveDto.createProduct(productRepository.findByName(dto.name), dto, promotionRepository.findByName(dto.promotion));
+            productRepository.save(product);
+        }
+        List<Product> products = productRepository.findAll();
+        for (Product product : products) {
+            List<Inventory> inventories = product.inventories();
+            if (inventories.size() == 1 && (inventories.getFirst().promotion() instanceof BuyNGetOneFree)) {
+                product.addInventory(new Inventory(inventories.getFirst().price(), BigInteger.ZERO, NonePromotion.getInstance()));
+            }
+        }
+
         return productRepository.count();
     }
 }

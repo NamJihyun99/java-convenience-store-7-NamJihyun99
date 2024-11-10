@@ -33,9 +33,6 @@ public class ProductSaveDto implements SaveDto {
         Long price = Long.valueOf(params.get(1));
         BigInteger quantity = new BigInteger(params.get(2));
         String promotion = params.get(3);
-        if (params.get(3).equals("null")) {
-            promotion = null;
-        }
         return new ProductSaveDto(name, price, quantity, promotion);
     }
 

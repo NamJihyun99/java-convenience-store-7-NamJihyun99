@@ -18,7 +18,7 @@ public class Product {
 
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException(ExceptionCode.NAME_BLANK.message);
+            throw new IllegalArgumentException(ExceptionCode.INCORRECT_NAME.message);
         }
     }
 

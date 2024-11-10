@@ -29,7 +29,7 @@ class BuyNGetOneFreeTest {
                 BigInteger.TWO, BigInteger.ONE,
                 LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31")))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining(ExceptionCode.NAME_BLANK.message);
+                .hasMessageContaining(ExceptionCode.INCORRECT_NAME.message);
     }
 
     @DisplayName("프로모션 적용 상품 개수가 0보다 작거나 같으면 예외가 발생한다.")
