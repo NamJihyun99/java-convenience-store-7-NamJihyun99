@@ -1,5 +1,10 @@
 package store.inventory.file.dto;
 
+import store.domain.Inventory;
+import store.domain.NonePromotion;
+import store.domain.Product;
+import store.domain.Promotion;
+
 import java.math.BigInteger;
 import java.util.List;
 
@@ -9,13 +14,13 @@ import static store.inventory.file.exception.ExceptionCode.FIELD_TYPE_NOT_MATCHE
 public class ProductSaveDto implements SaveDto {
 
     public final String name;
-    public final BigInteger price;
+    public final Long price;
     public final BigInteger quantity;
     public final String promotion;
 
     public static final int numberOfFields = 4;
 
-    private ProductSaveDto(String name, BigInteger price, BigInteger quantity, String promotion) {
+    private ProductSaveDto(String name, Long price, BigInteger quantity, String promotion) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -25,7 +30,7 @@ public class ProductSaveDto implements SaveDto {
     public static ProductSaveDto create(List<String> params) {
         validateParams(params);
         String name = params.get(0);
-        BigInteger price = new BigInteger(params.get(1));
+        Long price = Long.valueOf(params.get(1));
         BigInteger quantity = new BigInteger(params.get(2));
         String promotion = params.get(3);
         if (params.get(3).equals("null")) {
@@ -62,6 +67,14 @@ public class ProductSaveDto implements SaveDto {
         if (params.size() != numberOfFields) {
             throw new IllegalArgumentException(DTO_NOT_MATCHED.message);
         }
+    }
+
+    public static Product createProduct(Product product, ProductSaveDto dto, Promotion promotion) {
+        if (product == null) {
+            return new Product(dto.name, new Inventory(dto.price, dto.quantity, promotion));
+        }
+        product.addInventory(new Inventory(dto.price, dto.quantity, promotion));
+        return product;
     }
 
     @Override

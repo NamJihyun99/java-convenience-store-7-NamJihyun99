@@ -25,5 +25,6 @@ public class ProductController {
     public void run() throws IOException {
         List<ProductSaveDto> productSaveDtos = fileInputView.readProducts();
         BigInteger promotionCount = productService.savePromotions(fileInputView.readPromotions());
+        BigInteger productCount = productService.saveProducts(fileInputView.readProducts());
     }
 }

@@ -6,9 +6,9 @@ import static store.inventory.common.ExceptionCode.QUANTITY_SHORTAGE;
 
 public class Inventory {
 
-    private Long price;
+    private final Long price;
+    private final Promotion promotion;
     private BigInteger quantity;
-    private Promotion promotion;
 
     public Inventory(Long price, BigInteger quantity, Promotion promotion) {
         this.price = price;

@@ -34,7 +34,7 @@ class ProductCsvFileParserTest {
     void 상품_가격_타입() throws Exception {
         ProductCsvFileParser parser = new ProductCsvFileParser();
         List<ProductSaveDto> result = parser.parse("src/test/resources/products.md");
-        assertThat(result.getFirst().price).isInstanceOf(BigInteger.class);
+        assertThat(result.getFirst().price).isInstanceOf(Long.class);
     }
 
     @DisplayName("products.md 파일 상품목록의 quantity의 타입은 BigInteger다")

@@ -1,5 +1,6 @@
 package store;
 
+import store.repository.MemoryProductRepository;
 import store.repository.MemoryPromotionRepository;
 import store.sale.common.DateTimeGenerator;
 import store.sale.common.FixedDateTimeGenerator;
@@ -17,7 +18,7 @@ public class Application {
 
     private static void setStore() {
         FileInputView fileInputView = new FileInputView(new ProductCsvFileParser(), new PromotionCsvFileParser());
-        ProductService productService = new ProductService(MemoryPromotionRepository.getInstance());
+        ProductService productService = new ProductService(MemoryPromotionRepository.getInstance(), MemoryProductRepository.getInstance());
         ProductController controller = ProductController.create(fileInputView, productService);
         try {
             controller.run();

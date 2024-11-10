@@ -10,9 +10,10 @@ public class Product {
     private final String name;
     private final List<Inventory> inventories = new ArrayList<>();
 
-    public Product(String name) {
+    public Product(String name, Inventory inventory) {
         validateName(name);
         this.name = name;
+        this.inventories.add(inventory);
     }
 
     private void validateName(String name) {
