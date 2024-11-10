@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class BuyNGetOneFreeTest {
+class PromotionTest {
 
     @DisplayName("프로모션 객체 생성 성공")
     @Test

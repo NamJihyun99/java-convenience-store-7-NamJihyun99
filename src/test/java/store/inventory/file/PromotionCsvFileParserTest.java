@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BuyNGetOneFreeCsvFileParserTest {
+class PromotionCsvFileParserTest {
 
     static final String FILE_PATH = "src/test/resources/promotions.md";
 

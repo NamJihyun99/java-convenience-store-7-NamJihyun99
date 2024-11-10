@@ -20,13 +20,13 @@ class ProductResponseDtoTest {
          * - 사이다 1,000원 8개 탄산2+1
          * - 사이다 1,000원 7개
          * */
-        Promotion bngoPromotion = Promotion.create("탄산2+1",
+        Promotion promotion = Promotion.create("탄산2+1",
                 BigInteger.TWO, BigInteger.ONE,
                 LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31")
         );
         Product product = new Product("사이다", 1000L);
         product.setQuantity(BigInteger.valueOf(7));
-        product.setPromotionInventory(new Inventory(1000L, BigInteger.valueOf(8), bngoPromotion));
+        product.setPromotionInventory(new Inventory(1000L, BigInteger.valueOf(8), promotion));
         List<ProductResponseDto> responseDtos = ProductResponseDto.create(product);
         responseDtos.forEach(System.out::println);
         assertThat(responseDtos.size()).isEqualTo(2);

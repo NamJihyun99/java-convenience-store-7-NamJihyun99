@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class PurchasingPlan {
 
-    final Map<String, BngoProducts> bngoProducts = new HashMap<>();
+    final Map<String, PromotionProduct> promotionProducts = new HashMap<>();
     final Map<String, NonePromotionProduct> nonePromotionProducts = new HashMap<>();
 
     public PurchasingPlan(List<Order> orders) {
@@ -20,14 +20,14 @@ public class PurchasingPlan {
     }
 
     public void addFreeGet(ProductAmountDto dto) {
-        bngoProducts.get(dto.name()).plusGet(dto.amount());
+        promotionProducts.get(dto.name()).plusGet(dto.amount());
         nonePromotionProducts.get(dto.name()).subtractAmount(dto.amount());
     }
 
     public BigInteger getTotal() {
         BigInteger sum = BigInteger.ZERO;
-        for (BngoProducts bngoProducts : bngoProducts.values()) {
-            sum = sum.add(bngoProducts.getTotal());
+        for (PromotionProduct promotionProduct : promotionProducts.values()) {
+            sum = sum.add(promotionProduct.getTotal());
         }
         for (NonePromotionProduct nonePromotionProduct : nonePromotionProducts.values()) {
             sum = sum.add(nonePromotionProduct.getTotal());
@@ -35,13 +35,13 @@ public class PurchasingPlan {
         return sum;
     }
 
-    private static class BngoProducts {
+    private static class PromotionProduct {
         Product product;
         BigInteger buyAmount;
         BigInteger getAmount;
         BigInteger price;
 
-        BngoProducts(Product product) {
+        PromotionProduct(Product product) {
             this.product = product;
         }
 
