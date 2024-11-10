@@ -40,10 +40,10 @@ public class Inventory {
         return extraGet;
     }
 
-    private BigInteger countTurns(BigInteger demand, BiPredicate<BigInteger, BigInteger> totalCondition) {
+    private BigInteger countTurns(BigInteger demand, BiPredicate<BigInteger, BigInteger> demandCondition) {
         BigInteger count = BigInteger.ZERO;
         BigInteger total = BigInteger.ZERO;
-        while (totalCondition.test(demand, total) && lessThanQuantity(total)) {
+        while (demandCondition.test(demand, total) && lessThanQuantity(total)) {
             count = count.add(BigInteger.ONE);
             total = total.add(promotion.buy().add(promotion.get()));
         }

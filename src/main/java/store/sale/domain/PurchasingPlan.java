@@ -1,6 +1,9 @@
 package store.sale.domain;
 
+import store.domain.Inventory;
 import store.domain.Product;
+import store.domain.Promotion;
+import store.sale.common.DateTime;
 import store.sale.view.ProductAmountDto;
 
 import java.math.BigInteger;
@@ -8,71 +11,104 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static store.sale.common.SaleExceptionCode.PROMOTION_NOT_EXISTED;
+import static store.sale.common.SaleExceptionCode.PROMOTION_UNABLE;
+
 public class PurchasingPlan {
 
-    final Map<String, PromotionProduct> promotionProducts = new HashMap<>();
-    final Map<String, NonePromotionProduct> nonePromotionProducts = new HashMap<>();
+    private final DateTime dateTime;
+    private final Map<String, Form> forms = new HashMap<>();
 
-    public PurchasingPlan(List<Order> orders) {
-        orders.forEach(order ->
-                nonePromotionProducts.put(order.product().name(), new NonePromotionProduct(order.product(), order.amount()))
-        );
+    public PurchasingPlan(DateTime dateTime, List<Order> orders) {
+        this.dateTime = dateTime;
+        orders.forEach(order -> {
+            Form form = new Form(order.product(), order.amount());
+            if (order.product().getPromotionInventory().isPresent()) {
+                form.addPromotionAmount(order.product().getPromotionQuantity(order.amount(), dateTime));
+            }
+            forms.put(order.product().name(), form);
+        });
     }
 
     public void addFreeGet(ProductAmountDto dto) {
-        promotionProducts.get(dto.name()).plusGet(dto.amount());
-        nonePromotionProducts.get(dto.name()).subtractAmount(dto.amount());
+        Form form = forms.get(dto.name());
+        form.addExtraNonPromotionAmount(dto.amount());
+        form.addPromotionAmount(form.product.getPromotionQuantity(form.nonPromotionAmount, dateTime));
     }
 
     public BigInteger getTotal() {
         BigInteger sum = BigInteger.ZERO;
-        for (PromotionProduct promotionProduct : promotionProducts.values()) {
-            sum = sum.add(promotionProduct.getTotal());
-        }
-        for (NonePromotionProduct nonePromotionProduct : nonePromotionProducts.values()) {
-            sum = sum.add(nonePromotionProduct.getTotal());
+        for (Form form : forms.values()) {
+            sum = sum.add(form.getTotalPrice());
         }
         return sum;
     }
 
-    private static class PromotionProduct {
-        Product product;
-        BigInteger buyAmount;
-        BigInteger getAmount;
-        BigInteger price;
-
-        PromotionProduct(Product product) {
-            this.product = product;
+    public BigInteger getGetTotal() {
+        BigInteger sum = BigInteger.ZERO;
+        for (Form form : forms.values()) {
+            sum = sum.add(form.getGetPrice());
         }
-
-        void plusGet(BigInteger amount) {
-            this.getAmount = this.getAmount.add(amount);
-        }
-
-        BigInteger getTotal() {
-            return buyAmount.multiply(this.price);
-        }
+        return sum;
     }
 
-    private static class NonePromotionProduct {
+    private static class Form {
         Product product;
-        BigInteger buyAmount;
+        BigInteger promotionBuyAmount;
+        BigInteger promotionGetAmount;
+        BigInteger nonPromotionAmount;
 
-        NonePromotionProduct(Product product, BigInteger buyAmount) {
+        public Form(Product product, BigInteger nonPromotionAmount) {
             this.product = product;
-            this.buyAmount = buyAmount;
+            this.promotionBuyAmount = BigInteger.ZERO;
+            this.promotionGetAmount = BigInteger.ZERO;
+            this.nonPromotionAmount = nonPromotionAmount;
         }
 
-        BigInteger getTotal() {
-            return buyAmount.multiply(BigInteger.valueOf(this.product.price()));
+        void addPromotionAmount(BigInteger totalAmount) {
+            Promotion promotion = validPromotion(totalAmount);
+            BigInteger divide = totalAmount.divide(promotion.buy().add(promotion.get()));
+            this.promotionBuyAmount = this.promotionBuyAmount.add(promotion.buy().multiply(divide));
+            this.promotionGetAmount = this.promotionGetAmount.add(promotion.get().multiply(divide));
+            this.nonPromotionAmount = this.nonPromotionAmount.subtract(totalAmount);
         }
 
-        void addAmount(BigInteger amount) {
-            this.buyAmount = this.buyAmount.add(amount);
+        void subtractPromotionAmount(BigInteger totalAmount, DateTime dateTime) {
+            Promotion promotion = validPromotion(totalAmount);
+            BigInteger divide = totalAmount.divide(promotion.buy().add(promotion.get()));
+            this.promotionBuyAmount = this.promotionBuyAmount.subtract(promotion.buy().multiply(divide));
+            this.promotionGetAmount = this.promotionGetAmount.subtract(promotion.get().multiply(divide));
+            this.nonPromotionAmount = this.nonPromotionAmount.add(totalAmount);
         }
 
-        void subtractAmount(BigInteger amount) {
-            this.buyAmount = this.buyAmount.subtract(amount);
+        void addExtraNonPromotionAmount(BigInteger amount) {
+            this.nonPromotionAmount = this.nonPromotionAmount.add(amount);
+        }
+
+        private Promotion validPromotion(BigInteger totalAmount) {
+            Inventory inventory = product.getPromotionInventory()
+                    .orElseThrow(() -> new IllegalStateException(PROMOTION_NOT_EXISTED.message));
+            Promotion promotion = inventory.promotion();
+            if (totalAmount.mod(promotion.buy().add(promotion.get())).compareTo(BigInteger.ZERO) != 0) {
+                throw new IllegalArgumentException(PROMOTION_UNABLE.message);
+            }
+            return promotion;
+        }
+
+        BigInteger getTotalPrice() {
+            BigInteger sum = BigInteger.ZERO;
+            if (product.getPromotionInventory().isPresent()) {
+                sum = sum.add(promotionBuyAmount).add(promotionGetAmount).multiply(BigInteger.valueOf(product.price()));
+            }
+            return sum.add(nonPromotionAmount.multiply(BigInteger.valueOf(product.price())));
+        }
+
+        BigInteger getGetPrice() {
+            BigInteger sum = BigInteger.ZERO;
+            if (product.getPromotionInventory().isPresent()) {
+                sum = sum.add(promotionGetAmount).multiply(BigInteger.valueOf(product.price()));
+            }
+            return sum;
         }
     }
 }

@@ -41,7 +41,7 @@ public class SaleController {
             outputView.printProducts(saleService.readProducts());
             List<List<String>> tokens = OrderRequestParser.parse(readOrderRequest());
             List<Order> orders = saleService.createOrders(tokens);
-            PurchasingPlan plan = new PurchasingPlan(orders);
+            PurchasingPlan plan = new PurchasingPlan(dateTime, orders);
             List<ProductAmountDto> extraGets = saleService.getEnableProduct(orders, dateTime);
             for (ProductAmountDto dto : extraGets) {
                 String response = readExtraGet(dto);
