@@ -1,12 +1,9 @@
 package store.inventory.controller;
 
-import store.inventory.file.dto.ProductSaveDto;
 import store.inventory.service.ProductService;
 import store.inventory.view.FileInputView;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.List;
 
 public class ProductController {
 
@@ -23,8 +20,7 @@ public class ProductController {
     }
 
     public void run() throws IOException {
-        List<ProductSaveDto> productSaveDtos = fileInputView.readProducts();
-        BigInteger promotionCount = productService.savePromotions(fileInputView.readPromotions());
-        BigInteger productCount = productService.saveProducts(fileInputView.readProducts());
+        productService.savePromotions(fileInputView.readPromotions());
+        productService.saveProducts(fileInputView.readProducts());
     }
 }
