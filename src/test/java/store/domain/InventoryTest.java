@@ -18,7 +18,7 @@ class InventoryTest {
     @Test
     void 재고_차감_성공() {
         Promotion promotion = createPromotion();
-        Inventory inventory = new Inventory(1000L, BigInteger.TEN, promotion);
+        Inventory inventory = new Inventory(BigInteger.TEN, promotion);
         inventory.deduct(BigInteger.TWO);
         assertThat(inventory.quantity()).isEqualTo(BigInteger.valueOf(8));
     }
@@ -27,7 +27,7 @@ class InventoryTest {
     @Test
     void 재고_부족() {
         Promotion promotion = createPromotion();
-        Inventory inventory = new Inventory(1000L, BigInteger.TEN, promotion);
+        Inventory inventory = new Inventory(BigInteger.TEN, promotion);
         assertThatThrownBy(() -> inventory.deduct(BigInteger.valueOf(20)))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining(QUANTITY_SHORTAGE.message);
@@ -38,7 +38,7 @@ class InventoryTest {
     @CsvSource(value = {"1,0", "2,1", "5,1", "10,0"})
     void 증정_계산(String demand, String answer) {
         Promotion promotion = createPromotion();
-        Inventory inventory = new Inventory(1000L, BigInteger.valueOf(7L), promotion);
+        Inventory inventory = new Inventory(BigInteger.valueOf(7L), promotion);
         assertThat(inventory.enableExtraGet(new BigInteger(demand))).isEqualTo(new BigInteger(answer));
     }
 

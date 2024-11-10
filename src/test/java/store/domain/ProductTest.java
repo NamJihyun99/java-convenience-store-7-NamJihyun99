@@ -17,7 +17,7 @@ public class ProductTest {
         Promotion promotion = Promotion.create("탄산2+1",
                 BigInteger.TWO, BigInteger.ONE,
                 LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"));
-        product.setPromotionInventory(new Inventory(1000L, BigInteger.TEN, promotion));
+        product.setPromotionInventory(new Inventory( BigInteger.TEN, promotion));
         assertThat(product.getPromotionInventory().get()).isInstanceOf(Inventory.class);
     }
 

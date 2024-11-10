@@ -26,7 +26,7 @@ class ProductResponseDtoTest {
         );
         Product product = new Product("사이다", 1000L);
         product.setQuantity(BigInteger.valueOf(7));
-        product.setPromotionInventory(new Inventory(1000L, BigInteger.valueOf(8), promotion));
+        product.setPromotionInventory(new Inventory(BigInteger.valueOf(8), promotion));
         List<ProductResponseDto> responseDtos = ProductResponseDto.create(product);
         responseDtos.forEach(System.out::println);
         assertThat(responseDtos.size()).isEqualTo(2);

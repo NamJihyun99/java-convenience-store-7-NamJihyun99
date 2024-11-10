@@ -6,12 +6,10 @@ import static store.inventory.common.ExceptionCode.QUANTITY_SHORTAGE;
 
 public class Inventory {
 
-    private final Long price;
     private final Promotion promotion;
     private BigInteger quantity;
 
-    public Inventory(Long price, BigInteger quantity, Promotion promotion) {
-        this.price = price;
+    public Inventory(BigInteger quantity, Promotion promotion) {
         this.quantity = quantity;
         this.promotion = promotion;
     }
@@ -35,15 +33,19 @@ public class Inventory {
     private BigInteger countTurns(BigInteger demand) {
         BigInteger count = BigInteger.ZERO;
         BigInteger total = BigInteger.ZERO;
-        while (total.add(promotion.buy()).compareTo(demand) <= 0 && total.add(promotion.buy().add(promotion.get())).compareTo(quantity) <= 0) {
+        while (lessThanDemand(demand, total) && lessThanQuantity(total)) {
             count = count.add(BigInteger.ONE);
             total = total.add(promotion.buy().add(promotion.get()));
         }
         return count;
     }
 
-    public Long price() {
-        return price;
+    private boolean lessThanQuantity(BigInteger total) {
+        return total.add(promotion.buy().add(promotion.get())).compareTo(quantity) <= 0;
+    }
+
+    private boolean lessThanDemand(BigInteger demand, BigInteger total) {
+        return total.add(promotion.buy()).compareTo(demand) <= 0;
     }
 
     public BigInteger quantity() {
