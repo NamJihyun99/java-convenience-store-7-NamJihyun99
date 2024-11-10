@@ -1,6 +1,7 @@
 package store.inventory.service;
 
-import store.domain.*;
+import store.domain.Product;
+import store.domain.Promotion;
 import store.inventory.file.dto.ProductSaveDto;
 import store.inventory.file.dto.PromotionSaveDto;
 import store.repository.ProductRepository;
@@ -9,8 +10,6 @@ import store.repository.PromotionRepository;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
-
-import static store.sale.common.SaleExceptionCode.PROMOTION_NOT_FOUND;
 
 public class ProductService {
 

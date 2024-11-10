@@ -1,6 +1,5 @@
 package store.sale.view;
 
-import store.domain.Inventory;
 import store.domain.Product;
 
 import java.math.BigInteger;

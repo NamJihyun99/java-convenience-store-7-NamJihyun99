@@ -1,17 +1,17 @@
 package store;
 
+import store.inventory.controller.ProductController;
+import store.inventory.file.ProductCsvFileParser;
+import store.inventory.file.PromotionCsvFileParser;
+import store.inventory.service.ProductService;
+import store.inventory.view.FileInputView;
 import store.repository.MemoryProductRepository;
 import store.repository.MemoryPromotionRepository;
 import store.sale.common.DateTimeGenerator;
 import store.sale.common.FixedDateTimeGenerator;
-import store.inventory.controller.ProductController;
 import store.sale.controller.SaleController;
-import store.inventory.file.ProductCsvFileParser;
-import store.inventory.file.PromotionCsvFileParser;
-import store.inventory.service.ProductService;
 import store.sale.service.SaleService;
 import store.sale.view.ConsoleInputView;
-import store.inventory.view.FileInputView;
 import store.sale.view.OutputView;
 
 public class Application {

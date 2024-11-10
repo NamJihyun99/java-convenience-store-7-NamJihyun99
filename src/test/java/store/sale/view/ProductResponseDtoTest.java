@@ -1,7 +1,9 @@
 package store.sale.view;
 
 import org.junit.jupiter.api.Test;
-import store.domain.*;
+import store.domain.Inventory;
+import store.domain.Product;
+import store.domain.Promotion;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
