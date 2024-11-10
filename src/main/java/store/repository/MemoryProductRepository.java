@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryProductRepository implements ProductRepository {
@@ -25,8 +26,8 @@ public class MemoryProductRepository implements ProductRepository {
     }
 
     @Override
-    public Product findByName(String name) {
-        return products.get(name);
+    public Optional<Product> findByName(String name) {
+        return Optional.ofNullable(products.get(name));
     }
 
     @Override

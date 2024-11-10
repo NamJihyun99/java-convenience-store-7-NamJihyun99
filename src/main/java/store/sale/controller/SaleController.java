@@ -1,10 +1,14 @@
 package store.sale.controller;
 
 import store.sale.common.DateTimeGenerator;
+import store.sale.domain.Order;
 import store.sale.service.SaleService;
 import store.sale.view.ConsoleInputView;
+import store.sale.view.OrderRequestParser;
 import store.sale.view.OutputView;
 
+import java.math.BigInteger;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static store.sale.common.InputValidationExceptionCode.INCORRECT_FORMAT;
@@ -33,7 +37,36 @@ public class SaleController {
     public void run() {
         do {
             outputView.printProducts(saleService.readProducts());
+            List<List<String>> tokens = OrderRequestParser.parse(readOrderRequest());
+            List<Order> orders = saleService.createOrders(tokens);
         } while (readContinueYn().equals("Y"));
+    }
+
+    private String readOrderRequest() {
+        return retryUntilValid(() -> {
+            String orderRequest = inputView.readOrderRequest();
+            validateOrderRequest(orderRequest);
+            return orderRequest;
+        });
+    }
+
+    // TODO: 입력값 유효성 검사 책임 분리하기
+    private void validateOrderRequest(String orderRequest) {
+        List<String> orderInputs = List.of(orderRequest.split(","));
+        try {
+            orderInputs.forEach(orderInput -> {
+                validateProductForm(orderInput);
+                new BigInteger(orderInput.substring(1, orderInput.length()-1).split("-")[1]);
+            });
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
+        }
+    }
+
+    private static void validateProductForm(String orderInput) {
+        if (orderInput.charAt(0) != '[' || orderInput.charAt(orderInput.length()-1) != ']') {
+            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
+        }
     }
 
     private String readContinueYn() {

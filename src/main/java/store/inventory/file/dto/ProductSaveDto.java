@@ -1,12 +1,12 @@
 package store.inventory.file.dto;
 
 import store.domain.Inventory;
-import store.domain.NonePromotion;
 import store.domain.Product;
 import store.domain.Promotion;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 import static store.inventory.file.exception.ExceptionCode.DTO_NOT_MATCHED;
 import static store.inventory.file.exception.ExceptionCode.FIELD_TYPE_NOT_MATCHED;
@@ -66,10 +66,8 @@ public class ProductSaveDto implements SaveDto {
         }
     }
 
-    public static Product createProduct(Product product, ProductSaveDto dto, Promotion promotion) {
-        if (product == null) {
-            return new Product(dto.name, new Inventory(dto.price, dto.quantity, promotion));
-        }
+    public static Product createProduct(Optional<Product> result, ProductSaveDto dto, Promotion promotion) {
+        Product product = result.orElse(new Product(dto.name));
         product.addInventory(new Inventory(dto.price, dto.quantity, promotion));
         return product;
     }

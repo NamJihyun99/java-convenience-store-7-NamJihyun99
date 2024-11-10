@@ -23,8 +23,9 @@ class ProductResponseDtoTest {
                 LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31")
         );
         Promotion nonePromotion = NonePromotion.getInstance();
-        Product product = new Product("사이다", new Inventory(1000L, BigInteger.valueOf(7), nonePromotion));
-        product.addInventory(new Inventory(1000L, new BigInteger("8"), bngoPromotion));
+        Product product = new Product("사이다");
+        product.addInventory(new Inventory(1000L, BigInteger.valueOf(7), nonePromotion));
+        product.addInventory(new Inventory(1000L, BigInteger.valueOf(8), bngoPromotion));
         List<ProductResponseDto> responseDtos = ProductResponseDto.create(product);
         responseDtos.forEach(System.out::println);
         assertThat(responseDtos.size()).isEqualTo(2);

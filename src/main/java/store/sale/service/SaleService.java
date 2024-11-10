@@ -3,7 +3,10 @@ package store.sale.service;
 import store.domain.Product;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
+import store.sale.domain.Order;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SaleService {
@@ -19,4 +22,15 @@ public class SaleService {
     public List<Product> readProducts() {
         return productRepository.findAll();
     }
+
+    public List<Order> createOrders(List<List<String>> requestTokens) {
+        List<Order> orders = new ArrayList<>();
+        requestTokens.forEach(requestToken -> {
+            Product product = productRepository.findByName(requestToken.getFirst()).orElseThrow();
+            orders.add(new Order(product, new BigInteger(requestToken.getLast())));
+        });
+        return orders;
+    }
+
+
 }
