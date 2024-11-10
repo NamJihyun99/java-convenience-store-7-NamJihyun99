@@ -1,6 +1,6 @@
 package store.domain;
 
-import store.common.ExceptionCode;
+import store.inventory.common.ExceptionCode;
 
 import java.util.ArrayList;
 import java.util.List;

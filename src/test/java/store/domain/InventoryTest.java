@@ -7,7 +7,7 @@ import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static store.common.ExceptionCode.QUANTITY_SHORTAGE;
+import static store.inventory.common.ExceptionCode.QUANTITY_SHORTAGE;
 
 /**
  * 가격과 프로모션, 재고를 하나로 묶는 개념

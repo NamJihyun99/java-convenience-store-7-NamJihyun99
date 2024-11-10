@@ -1,16 +1,16 @@
 package store;
 
-import store.common.DateTimeGenerator;
-import store.common.FixedDateTimeGenerator;
-import store.controller.ProductController;
-import store.controller.StoreController;
-import store.file.ProductCsvFileParser;
-import store.file.PromotionCsvFileParser;
-import store.service.ProductService;
-import store.service.StoreService;
-import store.view.ConsoleInputView;
-import store.view.FileInputView;
-import store.view.OutputView;
+import store.sale.common.DateTimeGenerator;
+import store.sale.common.FixedDateTimeGenerator;
+import store.inventory.controller.ProductController;
+import store.sale.controller.SaleController;
+import store.inventory.file.ProductCsvFileParser;
+import store.inventory.file.PromotionCsvFileParser;
+import store.inventory.service.ProductService;
+import store.sale.service.SaleService;
+import store.sale.view.ConsoleInputView;
+import store.inventory.view.FileInputView;
+import store.sale.view.OutputView;
 
 public class Application {
 
@@ -28,9 +28,9 @@ public class Application {
     private static void runStore() {
         ConsoleInputView consoleInputView = new ConsoleInputView();
         OutputView outputView = new OutputView();
-        StoreService service = new StoreService();
+        SaleService service = new SaleService();
         DateTimeGenerator dateTimeGenerator = new FixedDateTimeGenerator();
-        StoreController controller = StoreController.create(consoleInputView, outputView, service, dateTimeGenerator);
+        SaleController controller = SaleController.create(consoleInputView, outputView, service, dateTimeGenerator);
         controller.run();
     }
 

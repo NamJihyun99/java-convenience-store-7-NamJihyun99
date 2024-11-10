@@ -7,7 +7,7 @@ import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static store.common.ExceptionCode.PROMOTION_EXCEED;
+import static store.inventory.common.ExceptionCode.PROMOTION_EXCEED;
 
 public class ProductTest {
 

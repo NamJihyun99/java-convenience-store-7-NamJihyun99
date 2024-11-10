@@ -2,12 +2,13 @@ package store.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import store.common.ExceptionCode;
+import store.inventory.common.ExceptionCode;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BuyNGetOneFreeTest {
 

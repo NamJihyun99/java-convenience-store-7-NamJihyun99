@@ -2,7 +2,7 @@ package store.domain;
 
 import java.math.BigInteger;
 
-import static store.common.ExceptionCode.QUANTITY_SHORTAGE;
+import static store.inventory.common.ExceptionCode.QUANTITY_SHORTAGE;
 
 public class Inventory {
 

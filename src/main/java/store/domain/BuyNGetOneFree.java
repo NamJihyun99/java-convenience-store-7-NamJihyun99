@@ -3,7 +3,7 @@ package store.domain;
 import java.math.BigInteger;
 import java.time.LocalDate;
 
-import static store.common.ExceptionCode.*;
+import static store.inventory.common.ExceptionCode.*;
 
 public class BuyNGetOneFree extends Promotion {
 
