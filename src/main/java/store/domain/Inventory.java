@@ -1,6 +1,9 @@
 package store.domain;
 
+import store.sale.common.DateTime;
+
 import java.math.BigInteger;
+import java.util.function.BiPredicate;
 
 import static store.inventory.common.ExceptionCode.QUANTITY_SHORTAGE;
 
@@ -20,9 +23,16 @@ public class Inventory {
         }
         quantity = quantity.subtract(number);
     }
-    
+
+    public BigInteger getPromotionQuantity(BigInteger demand, DateTime dateTime) {
+        if (!promotion.enable(dateTime.now())) {
+            return BigInteger.ZERO;
+        }
+        return countTurns(demand, this::sumLessThanDemand).multiply(promotion.buy().add(promotion.get()));
+    }
+
     public BigInteger enableExtraGet(BigInteger demand) {
-        BigInteger count = countTurns(demand);
+        BigInteger count = countTurns(demand, this::buyLessThanDemand);
         BigInteger extraGet = count.multiply(promotion.buy().add(promotion.get())).subtract(demand);
         if (extraGet.compareTo(BigInteger.ZERO) <= 0) {
             extraGet = BigInteger.ZERO;
@@ -30,10 +40,10 @@ public class Inventory {
         return extraGet;
     }
 
-    private BigInteger countTurns(BigInteger demand) {
+    private BigInteger countTurns(BigInteger demand, BiPredicate<BigInteger, BigInteger> totalCondition) {
         BigInteger count = BigInteger.ZERO;
         BigInteger total = BigInteger.ZERO;
-        while (lessThanDemand(demand, total) && lessThanQuantity(total)) {
+        while (totalCondition.test(demand, total) && lessThanQuantity(total)) {
             count = count.add(BigInteger.ONE);
             total = total.add(promotion.buy().add(promotion.get()));
         }
@@ -44,8 +54,12 @@ public class Inventory {
         return total.add(promotion.buy().add(promotion.get())).compareTo(quantity) <= 0;
     }
 
-    private boolean lessThanDemand(BigInteger demand, BigInteger total) {
+    private boolean buyLessThanDemand(BigInteger demand, BigInteger total) {
         return total.add(promotion.buy()).compareTo(demand) <= 0;
+    }
+
+    private boolean sumLessThanDemand(BigInteger demand, BigInteger total) {
+        return total.add(promotion.buy().add(promotion.get())).compareTo(demand) <= 0;
     }
 
     public BigInteger quantity() {

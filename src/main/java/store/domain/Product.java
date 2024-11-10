@@ -1,6 +1,7 @@
 package store.domain;
 
 import store.inventory.common.ExceptionCode;
+import store.sale.common.DateTime;
 
 import java.math.BigInteger;
 import java.util.Optional;
@@ -52,6 +53,10 @@ public class Product {
 
     public BigInteger getExtraGet(BigInteger demand) {
         return promotionInventory.enableExtraGet(demand);
+    }
+
+    public BigInteger getPromotionQuantity(BigInteger demand, DateTime dateTime) {
+        return promotionInventory.getPromotionQuantity(demand, dateTime);
     }
 
 }

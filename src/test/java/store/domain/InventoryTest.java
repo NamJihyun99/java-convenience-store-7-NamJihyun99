@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import store.sale.common.DateTime;
+import store.sale.common.FixedDateTime;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -40,6 +42,16 @@ class InventoryTest {
         Promotion promotion = createPromotion();
         Inventory inventory = new Inventory(BigInteger.valueOf(7L), promotion);
         assertThat(inventory.enableExtraGet(new BigInteger(demand))).isEqualTo(new BigInteger(answer));
+    }
+
+    @ParameterizedTest
+    @DisplayName("사용자가 필요한 상품의 개수를 받아 프로모션을 적용한 개수를 계산한다.")
+    @CsvSource(value = {"7,6", "10,6", "3,3", "2,0"})
+    void 프로모션_적용_상품_개수(String demand, String answer) {
+        Promotion promotion = createPromotion();
+        DateTime dateTime = new FixedDateTime();
+        Inventory inventory = new Inventory(BigInteger.valueOf(7L), promotion);
+        assertThat(inventory.getPromotionQuantity(new BigInteger(demand), dateTime)).isEqualTo(new BigInteger(answer));
     }
 
     private static Promotion createPromotion() {
