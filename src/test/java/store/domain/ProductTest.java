@@ -15,7 +15,7 @@ public class ProductTest {
     @Test
     void addPromotion_Success() {
         Product product = new Product("콜라");
-        product.addInventory(new Inventory(1000L, BigInteger.TEN, new NonePromotion()));
+        product.addInventory(new Inventory(1000L, BigInteger.TEN, NonePromotion.getInstance()));
         assertThat(product.inventories().size()).isEqualTo(1);
     }
 
@@ -23,9 +23,9 @@ public class ProductTest {
     @Test
     void addPromotion_Exceed() {
         Product product = new Product("콜라");
-        product.addInventory(new Inventory(1000L, BigInteger.TEN, new NonePromotion()));
-        product.addInventory(new Inventory(1000L, BigInteger.TEN, new NonePromotion()));
-        assertThatThrownBy(() -> product.addInventory(new Inventory(1000L, BigInteger.TEN, new NonePromotion())))
+        product.addInventory(new Inventory(1000L, BigInteger.TEN, NonePromotion.getInstance()));
+        product.addInventory(new Inventory(1000L, BigInteger.TEN, NonePromotion.getInstance()));
+        assertThatThrownBy(() -> product.addInventory(new Inventory(1000L, BigInteger.TEN, NonePromotion.getInstance())))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(PROMOTION_EXCEED.message);
     }

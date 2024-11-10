@@ -2,7 +2,6 @@ package store.sale.view;
 
 import org.junit.jupiter.api.Test;
 import store.domain.*;
-import store.sale.view.ProductResponseDto;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -25,7 +24,7 @@ class ProductResponseDtoTest {
                 BigInteger.TWO, BigInteger.ONE,
                 LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31")
         );
-        Promotion nonePromotion = new NonePromotion();
+        Promotion nonePromotion = NonePromotion.getInstance();
         product.addInventory(new Inventory(1000L, new BigInteger("8"), bngoPromotion));
         product.addInventory(new Inventory(1000L, new BigInteger("7"), nonePromotion));
         List<ProductResponseDto> responseDtos = ProductResponseDto.create(product);

@@ -1,5 +1,8 @@
 package store.inventory.file.dto;
 
+import store.domain.BuyNGetOneFree;
+import store.domain.Promotion;
+
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -10,17 +13,17 @@ import static store.inventory.file.exception.ExceptionCode.FIELD_TYPE_NOT_MATCHE
 public class PromotionSaveDto implements SaveDto{
 
     public final String name;
-    public final BigInteger get;
     public final BigInteger buy;
+    public final BigInteger get;
     public final LocalDate startDate;
     public final LocalDate endDate;
 
     public final static int numberOfFields = 5;
 
-    private PromotionSaveDto(String name, BigInteger get, BigInteger buy, LocalDate startDate, LocalDate endDate) {
+    private PromotionSaveDto(String name, BigInteger buy, BigInteger get, LocalDate startDate, LocalDate endDate) {
         this.name = name;
-        this.get = get;
         this.buy = buy;
+        this.get = get;
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -28,11 +31,11 @@ public class PromotionSaveDto implements SaveDto{
     public static PromotionSaveDto create(List<String> params) {
         validateParams(params);
         String name = params.get(0);
-        BigInteger get = new BigInteger(params.get(1));
-        BigInteger buy = new BigInteger(params.get(2));
+        BigInteger buy = new BigInteger(params.get(1));
+        BigInteger get = new BigInteger(params.get(2));
         LocalDate startDate = LocalDate.parse(params.get(3));
         LocalDate endDate = LocalDate.parse(params.get(4));
-        return new PromotionSaveDto(name, get, buy, startDate, endDate);
+        return new PromotionSaveDto(name, buy, get, startDate, endDate);
     }
 
     private static void validateParams(List<String> params) {
@@ -74,12 +77,16 @@ public class PromotionSaveDto implements SaveDto{
         }
     }
 
+    public static Promotion of(PromotionSaveDto dto) {
+        return BuyNGetOneFree.create(dto.name, dto.buy, dto.get, dto.startDate, dto.endDate);
+    }
+
     @Override
     public String toString() {
         return "PromotionSaveDto{" +
                 "name='" + name + '\'' +
-                ", get=" + get +
                 ", buy=" + buy +
+                ", get=" + get +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 '}';

@@ -18,7 +18,7 @@ class InventoryTest {
     @DisplayName("구매한 상품의 개수를 받아 상품의 재고가 충분할 경우 재고를 차감한다.")
     @Test
     void 재고_차감_성공() {
-        Inventory inventory = new Inventory(1000L, BigInteger.TEN, new NonePromotion());
+        Inventory inventory = new Inventory(1000L, BigInteger.TEN, NonePromotion.getInstance());
         inventory.deduct(BigInteger.TWO);
         assertThat(inventory.quantity()).isEqualTo(BigInteger.valueOf(8));
     }
@@ -26,7 +26,7 @@ class InventoryTest {
     @DisplayName("구매한 상품의 개수를 받아 상품의 재고가 부족할 경우 예외가 발생한다.")
     @Test
     void 재고_부족() {
-        Inventory inventory = new Inventory(1000L, BigInteger.TEN, new NonePromotion());
+        Inventory inventory = new Inventory(1000L, BigInteger.TEN, NonePromotion.getInstance());
         assertThatThrownBy(() -> inventory.deduct(BigInteger.valueOf(20)))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining(QUANTITY_SHORTAGE.message);
