@@ -5,9 +5,8 @@ import java.time.LocalDate;
 
 import static store.common.ExceptionCode.*;
 
-public class BuyNGetOneFree implements Promotion {
+public class BuyNGetOneFree extends Promotion {
 
-    private final String name;
     private final BigInteger get;
     private final BigInteger buy;
     private final LocalDate startDate;
@@ -15,7 +14,7 @@ public class BuyNGetOneFree implements Promotion {
 
 
     private BuyNGetOneFree(String name, BigInteger get, BigInteger buy, LocalDate startDate, LocalDate endDate) {
-        this.name = name;
+        super(name);
         this.get = get;
         this.buy = buy;
         this.startDate = startDate;

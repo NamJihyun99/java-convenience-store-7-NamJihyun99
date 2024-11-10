@@ -23,7 +23,15 @@ public class Inventory {
         quantity = quantity.subtract(number);
     }
 
+    public Long price() {
+        return price;
+    }
+
     public BigInteger quantity() {
         return quantity;
+    }
+
+    public Promotion promotion() {
+        return promotion;
     }
 }

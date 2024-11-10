@@ -1,8 +1,14 @@
 package store.domain;
 
-public interface Promotion {
+public abstract class Promotion {
 
-    static Promotion of() {
-        return new NonePromotion();
+    private String name = "";
+
+    public Promotion(String name) {
+        this.name = name;
+    }
+
+    public String name() {
+        return name;
     }
 }

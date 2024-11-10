@@ -1,4 +1,8 @@
 package store.domain;
 
-public class NonePromotion implements Promotion {
+public class NonePromotion extends Promotion {
+
+    public NonePromotion() {
+        super("");
+    }
 }
