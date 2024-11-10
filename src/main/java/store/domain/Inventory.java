@@ -22,6 +22,25 @@ public class Inventory {
         }
         quantity = quantity.subtract(number);
     }
+    
+    public BigInteger enableExtraGet(BigInteger demand) {
+        BigInteger count = countTurns(demand);
+        BigInteger extraGet = count.multiply(promotion.buy().add(promotion.get())).subtract(demand);
+        if (extraGet.compareTo(BigInteger.ZERO) <= 0) {
+            extraGet = BigInteger.ZERO;
+        }
+        return extraGet;
+    }
+
+    private BigInteger countTurns(BigInteger demand) {
+        BigInteger count = BigInteger.ZERO;
+        BigInteger total = BigInteger.ZERO;
+        while (total.add(promotion.buy()).compareTo(demand) <= 0 && total.add(promotion.buy().add(promotion.get())).compareTo(quantity) <= 0) {
+            count = count.add(BigInteger.ONE);
+            total = total.add(promotion.buy().add(promotion.get()));
+        }
+        return count;
+    }
 
     public Long price() {
         return price;

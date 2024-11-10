@@ -1,6 +1,6 @@
 package store.sale.controller;
 
-import store.sale.common.DateTimeGenerator;
+import store.sale.common.DateTime;
 import store.sale.domain.Order;
 import store.sale.domain.PurchasingPlan;
 import store.sale.service.SaleService;
@@ -20,20 +20,20 @@ public class SaleController {
     private final ConsoleInputView inputView;
     private final OutputView outputView;
     private final SaleService saleService;
-    private final DateTimeGenerator dateTimeGenerator;
+    private final DateTime dateTime;
 
     private SaleController(ConsoleInputView consoleInputView,
                            OutputView outputView,
                            SaleService saleService,
-                           DateTimeGenerator dateTimeGenerator) {
+                           DateTime dateTime) {
         this.inputView = consoleInputView;
         this.outputView = outputView;
         this.saleService = saleService;
-        this.dateTimeGenerator = dateTimeGenerator;
+        this.dateTime = dateTime;
     }
 
-    public static SaleController create(ConsoleInputView consoleInputView, OutputView outputView, SaleService saleService, DateTimeGenerator dateTimeGenerator) {
-        return new SaleController(consoleInputView, outputView, saleService, dateTimeGenerator);
+    public static SaleController create(ConsoleInputView consoleInputView, OutputView outputView, SaleService saleService, DateTime dateTime) {
+        return new SaleController(consoleInputView, outputView, saleService, dateTime);
     }
 
     public void run() {
@@ -42,7 +42,7 @@ public class SaleController {
             List<List<String>> tokens = OrderRequestParser.parse(readOrderRequest());
             List<Order> orders = saleService.createOrders(tokens);
             PurchasingPlan plan = new PurchasingPlan(orders);
-            List<ProductAmountDto> extraGets = saleService.getEnableProduct(orders);
+            List<ProductAmountDto> extraGets = saleService.getEnableProduct(orders, dateTime);
             for (ProductAmountDto dto : extraGets) {
                 String response = readExtraGet(dto);
                 if (response.equals("Y")) {

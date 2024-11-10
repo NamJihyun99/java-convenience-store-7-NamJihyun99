@@ -2,6 +2,7 @@ package store.domain;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static store.inventory.common.ExceptionCode.*;
 
@@ -58,11 +59,8 @@ public class Promotion {
         return get;
     }
 
-    public LocalDate startDate() {
-        return startDate;
-    }
-
-    public LocalDate endDate() {
-        return endDate;
+    public boolean enable(LocalDateTime now) {
+        return now.isBefore(endDate.plusDays(1L).atStartOfDay())
+                && now.isAfter(startDate.atStartOfDay());
     }
 }

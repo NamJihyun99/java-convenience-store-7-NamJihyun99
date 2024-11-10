@@ -2,6 +2,8 @@ package store.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -29,6 +31,15 @@ class InventoryTest {
         assertThatThrownBy(() -> inventory.deduct(BigInteger.valueOf(20)))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining(QUANTITY_SHORTAGE.message);
+    }
+
+    @ParameterizedTest
+    @DisplayName("사용자가 필요한 상품의 개수를 받아 추가로 증정 가능한 개수를 계산한다.")
+    @CsvSource(value = {"1,0", "2,1", "5,1", "10,0"})
+    void 증정_계산(String demand, String answer) {
+        Promotion promotion = createPromotion();
+        Inventory inventory = new Inventory(1000L, BigInteger.valueOf(7L), promotion);
+        assertThat(inventory.enableExtraGet(new BigInteger(demand))).isEqualTo(new BigInteger(answer));
     }
 
     private static Promotion createPromotion() {

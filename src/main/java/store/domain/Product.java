@@ -50,4 +50,8 @@ public class Product {
         return Optional.ofNullable(this.promotionInventory);
     }
 
+    public BigInteger getExtraGet(BigInteger demand) {
+        return promotionInventory.enableExtraGet(demand);
+    }
+
 }
