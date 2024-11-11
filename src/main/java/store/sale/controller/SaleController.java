@@ -7,7 +7,10 @@ import store.sale.dto.ProductAmountPriceDto;
 import store.sale.dto.ReceiptDto;
 import store.sale.model.PurchasingPlan;
 import store.sale.service.SaleService;
-import store.sale.view.*;
+import store.sale.view.ConsoleInputView;
+import store.sale.view.InputValidator;
+import store.sale.view.OrderRequestParser;
+import store.sale.view.OutputView;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -41,15 +44,19 @@ public class SaleController {
     public void run() {
         do {
             outputView.printProducts(saleService.readProducts());
-            List<Order> orders = saleService.createOrders(OrderRequestParser.parse(
-                    readWithValidation(inputView::readOrderRequest,
-                            orderRequest -> InputValidator.validateOrderRequest(orderRequest, saleService))
-            ));
+            List<Order> orders = createOrders();
             PurchasingPlan plan = new PurchasingPlan(dateTime, orders);
             process(orders, plan);
             outputView.printReceipt(makeReceipt(plan));
             saleService.deleteQuantity(plan);
         } while ("Y".equals(readWithValidation(inputView::readNextTurnYn, InputValidator::validateYn)));
+    }
+
+    private List<Order> createOrders() {
+        return saleService.createOrders(OrderRequestParser.parse(
+                readWithValidation(inputView::readOrderRequest,
+                        orderRequest -> InputValidator.validateOrderRequest(orderRequest, saleService))
+        ));
     }
 
     private void process(List<Order> orders, PurchasingPlan plan) {

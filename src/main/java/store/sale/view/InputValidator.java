@@ -18,30 +18,41 @@ public class InputValidator {
     }
 
     public static void validateOrderRequest(String orderRequest, SaleService saleService) {
-        List<String> productOrders = List.of(orderRequest.split(","));
+        checkBlank(orderRequest);
+        List.of(orderRequest.split(",")).forEach(orderInput -> {
+            validateHeadTail(orderInput);
+            List<String> order = List.of(orderInput.substring(1, orderInput.length() - 1).split("-"));
+            validateDemand(order);
+            validateQuantityExceed(new BigInteger(order.get(1)), saleService.findProductByName(order.getFirst()));
+        });
+
+    }
+
+    private static void validateDemand(List<String> order) {
         try {
-            productOrders.forEach(orderInput -> {
-                validateProductForm(orderInput);
-                List<String> order = List.of(orderInput.substring(1, orderInput.length() - 1).split("-"));
-                validateQuantityExceed(order, saleService.findProductByName(order.getFirst()));
-            });
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            new BigInteger(order.get(1));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
         }
     }
 
-    private static void validateQuantityExceed(List<String> order, Product product) {
+    private static void checkBlank(String orderRequest) {
+        if (orderRequest == null || orderRequest.isBlank()) {
+            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
+        }
+    }
+
+    private static void validateQuantityExceed(BigInteger demandAmount, Product product) {
         BigInteger quantity = product.quantity();
         if (product.getPromotionInventory().isPresent()) {
             quantity = quantity.add(product.getPromotionInventory().get().quantity());
         }
-        BigInteger demandAmount = new BigInteger(order.getLast());
         if (quantity.compareTo(demandAmount) < 0) {
             throw new IllegalArgumentException(QUANTITY_EXCEED.message);
         }
     }
 
-    private static void validateProductForm(String orderInput) {
+    private static void validateHeadTail(String orderInput) {
         if (orderInput.charAt(0) != '[' || orderInput.charAt(orderInput.length()-1) != ']') {
             throw new IllegalArgumentException(INCORRECT_FORMAT.message);
         }
