@@ -1,6 +1,6 @@
 package store.inventory.file;
 
-import store.inventory.file.dto.SaveDto;
+import store.inventory.dto.dto.SaveDto;
 
 import java.util.List;
 

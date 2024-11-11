@@ -1,4 +1,4 @@
-package store.sale.view;
+package store.sale.dto;
 
 import store.domain.Product;
 
@@ -13,13 +13,6 @@ public class ProductResponseDto {
     private final Long price;
     private final BigInteger quantity;
     private final String promotion;
-
-    private ProductResponseDto(String name, Long price, BigInteger quantity) {
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
-        this.promotion = "";
-    }
 
     private ProductResponseDto(String name, Long price, BigInteger quantity, String promotion) {
         this.name = name;
@@ -37,19 +30,17 @@ public class ProductResponseDto {
         return dtos;
     }
 
-    // TODO: 함수 예쁘게 만들기
     @Override
     public String toString() {
         DecimalFormat df = new DecimalFormat("###,###");
-        StringBuilder builder = new StringBuilder("- ");
-        builder.append(name).append(" ")
+        StringBuilder builder = new StringBuilder("- ")
+                .append(name).append(" ")
                 .append(df.format(price)).append("원 ");
         if (quantity.compareTo(BigInteger.ZERO) == 0) {
             builder.append("재고 없음");
         } else {
             builder.append(df.format(quantity)).append("개 ");
         }
-        builder.append(promotion).append(" ");
-        return builder.toString();
+        return builder.append(promotion).append(" ").toString();
     }
 }

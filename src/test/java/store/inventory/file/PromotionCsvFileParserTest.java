@@ -2,7 +2,7 @@ package store.inventory.file;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import store.inventory.file.dto.PromotionSaveDto;
+import store.inventory.dto.dto.PromotionSaveDto;
 
 import java.time.LocalDate;
 import java.util.List;

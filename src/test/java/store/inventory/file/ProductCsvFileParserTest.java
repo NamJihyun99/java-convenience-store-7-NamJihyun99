@@ -2,7 +2,7 @@ package store.inventory.file;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import store.inventory.file.dto.ProductSaveDto;
+import store.inventory.dto.dto.ProductSaveDto;
 
 import java.math.BigInteger;
 import java.util.List;

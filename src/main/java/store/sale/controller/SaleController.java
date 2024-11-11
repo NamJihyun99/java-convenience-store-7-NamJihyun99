@@ -2,15 +2,20 @@ package store.sale.controller;
 
 import store.sale.common.DateTime;
 import store.sale.domain.Order;
+import store.sale.dto.ProductAmountDto;
+import store.sale.dto.ProductAmountPriceDto;
+import store.sale.dto.ReceiptDto;
 import store.sale.model.PurchasingPlan;
 import store.sale.service.SaleService;
-import store.sale.view.*;
+import store.sale.view.ConsoleInputView;
+import store.sale.view.InputValidator;
+import store.sale.view.OrderRequestParser;
+import store.sale.view.OutputView;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static store.sale.common.InputValidationExceptionCode.INCORRECT_FORMAT;
 
 public class SaleController {
 
@@ -29,123 +34,94 @@ public class SaleController {
         this.dateTime = dateTime;
     }
 
-    public static SaleController create(ConsoleInputView consoleInputView, OutputView outputView, SaleService saleService, DateTime dateTime) {
+    public static SaleController create(ConsoleInputView consoleInputView,
+                                        OutputView outputView,
+                                        SaleService saleService,
+                                        DateTime dateTime) {
         return new SaleController(consoleInputView, outputView, saleService, dateTime);
     }
 
     public void run() {
         do {
             outputView.printProducts(saleService.readProducts());
-            List<List<String>> tokens = OrderRequestParser.parse(readOrderRequest());
-            List<Order> orders = saleService.createOrders(tokens);
+            List<Order> orders = createOrders();
             PurchasingPlan plan = new PurchasingPlan(dateTime, orders);
-            List<ProductAmountDto> extraGets = saleService.getEnableProduct(orders, dateTime);
-            for (ProductAmountDto dto : extraGets) {
-                String response = readExtraGet(dto);
-                if (response.equals("Y")) {
-                    plan.addFreeGet(dto);
-                }
-            }
-            plan.promotionQuantityShortages().forEach(dto -> {
-                if (readNonPromotion(dto).equals("N")) {
-                    plan.subtractNonPromotions(dto.name());
-                }
-            });
-            if (readMembership().equals("Y")) {
-                plan.applyMembership();
-            }
+            process(orders, plan);
             outputView.printReceipt(makeReceipt(plan));
             saleService.deleteQuantity(plan);
-        } while (readContinueYn().equals("Y"));
+        } while ("Y".equals(readWithValidation(inputView::readNextTurnYn, InputValidator::validateYn)));
+    }
+
+    private List<Order> createOrders() {
+        return saleService.createOrders(OrderRequestParser.parse(
+                readWithValidation(inputView::readOrderRequest,
+                        orderRequest -> InputValidator.validateOrderRequest(orderRequest, saleService))
+        ));
+    }
+
+    private void process(List<Order> orders, PurchasingPlan plan) {
+        handleExtraGets(orders, plan);
+        handleNonPromotions(plan);
+        handleMembershipDiscount(plan);
+    }
+
+    private void handleMembershipDiscount(PurchasingPlan plan) {
+        if ("Y".equals(readWithValidation(inputView::readMembershipYn, InputValidator::validateYn))) {
+            plan.applyMembership();
+        }
+    }
+
+    private void handleNonPromotions(PurchasingPlan plan) {
+        plan.promotionQuantityShortages().forEach(dto -> {
+            if ("N".equals(readWithValidation(() ->
+                            inputView.readNonPromotionYn(dto.name(),
+                                    dto.amount()),
+                    InputValidator::validateYn))) {
+                plan.subtractNonPromotions(dto.name());
+            }
+        });
+    }
+
+    private void handleExtraGets(List<Order> orders, PurchasingPlan plan) {
+        saleService.getEnableProduct(orders, dateTime).forEach(dto -> {
+            if ("Y".equals(readWithValidation(() ->
+                    inputView.readPromotionYn(dto), InputValidator::validateYn
+            ))) {
+                plan.addFreeGet(dto);
+            }
+        });
     }
 
     private ReceiptDto makeReceipt(PurchasingPlan plan) {
-        List<ProductAmountPriceDto> buys = plan.getForms().values().stream().map(form ->
-                new ProductAmountPriceDto(form.getProduct().name(),
-                        form.getPromotionBuyAmount().add(form.getNonPromotionAmount()),
-                        form.getPromotionBuyAmount().add(form.getNonPromotionAmount()).multiply(BigInteger.valueOf(form.getProduct().price()))
-                )
-        ).toList();
-        List<ProductAmountDto> gets = plan.getForms().values().stream().map(form ->
-                new ProductAmountDto(form.getProduct().name(),
-                        form.getUnpayedAmount()
-                )
-        ).toList();
-        return new ReceiptDto(buys, gets, plan.getTotal(), plan.getGetTotal(), plan.getMembershipDiscount());
+        List<ProductAmountPriceDto> buys = getBuysDto(plan);
+        List<ProductAmountDto> gets = getGetsDto(plan);
+        return new ReceiptDto(buys, gets, plan.getTotal(), plan.getPromotionDiscount(), plan.getMembershipDiscount());
     }
 
-    private String readExtraGet(ProductAmountDto extraGet) {
-        return retryUntilValid(() -> {
-            String response = inputView.readPromotionYn(extraGet);
-            validateYn(response);
-            return response;
-        });
+    private static List<ProductAmountDto> getGetsDto(PurchasingPlan plan) {
+        return plan.getForms().values().stream().
+                map(form -> new ProductAmountDto(form.getProduct().name(), form.getUnpayedAmount()))
+                .toList();
     }
 
-    private String readOrderRequest() {
-        return retryUntilValid(() -> {
-            String orderRequest = inputView.readOrderRequest();
-            validateOrderRequest(orderRequest);
-            return orderRequest;
-        });
+    private static List<ProductAmountPriceDto> getBuysDto(PurchasingPlan plan) {
+        return plan.getForms().values().stream()
+                .map(form ->
+                        new ProductAmountPriceDto(
+                                form.getProduct().name(),
+                                form.getPromotionBuyAmount().add(form.getNonPromotionAmount()),
+                                form.getPromotionBuyAmount().add(form.getNonPromotionAmount()).multiply(BigInteger.valueOf(form.getProduct().price())))
+                ).toList();
     }
 
-    private String readNonPromotion(ProductAmountDto shortage) {
-        return retryUntilValid(() -> {
-            String response = inputView.readNonPromotionYn(shortage.name(), shortage.amount());
-            validateYn(response);
-            return response;
-        });
-    }
-
-    private String readMembership() {
-        return retryUntilValid(() -> {
-            String response = inputView.readMembershipYn();
-            validateYn(response);
-            return response;
-        });
-    }
-
-    // TODO: 입력값 유효성 검사 책임 분리하기
-    private void validateOrderRequest(String orderRequest) {
-        List<String> productOrders = List.of(orderRequest.split(","));
+    private <T> T readWithValidation(Supplier<T> supplier, Consumer<T> validator) {
         try {
-            productOrders.forEach(orderInput -> {
-                validateProductForm(orderInput);
-                List<String> tokens = List.of(orderInput.substring(1, orderInput.length() - 1).split("-"));
-                saleService.validateOrderProducts(tokens);
-            });
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
-
-    private static void validateProductForm(String orderInput) {
-        if (orderInput.charAt(0) != '[' || orderInput.charAt(orderInput.length()-1) != ']') {
-            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
-        }
-    }
-
-    private String readContinueYn() {
-        return retryUntilValid(() -> {
-            String continueYn = inputView.readNextTurnYn();
-            validateYn(continueYn);
-            return continueYn;
-        });
-    }
-
-    private void validateYn(String response) {
-        if (!response.equals("Y") && !response.equals("N")) {
-            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
-        }
-    }
-
-    private <T> T retryUntilValid(Supplier<T> supplier) {
-        try {
-            return supplier.get();
+            T result = supplier.get();
+            validator.accept(result);
+            return result;
         } catch (IllegalArgumentException e) {
             outputView.printError(e);
-            return retryUntilValid(supplier);
+            return readWithValidation(supplier, validator);
         }
     }
 }

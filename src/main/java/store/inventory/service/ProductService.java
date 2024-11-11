@@ -2,8 +2,8 @@ package store.inventory.service;
 
 import store.domain.Product;
 import store.domain.Promotion;
-import store.inventory.file.dto.ProductSaveDto;
-import store.inventory.file.dto.PromotionSaveDto;
+import store.inventory.dto.dto.ProductSaveDto;
+import store.inventory.dto.dto.PromotionSaveDto;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
 

@@ -1,4 +1,4 @@
-package store.sale.view;
+package store.sale.dto;
 
 import java.math.BigInteger;
 
