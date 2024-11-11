@@ -1,7 +1,7 @@
 package store.sale.controller;
 
 import store.sale.common.DateTime;
-import store.sale.domain.Order;
+import store.sale.model.Order;
 import store.sale.dto.ProductAmountDto;
 import store.sale.dto.ProductAmountPriceDto;
 import store.sale.dto.ReceiptDto;
