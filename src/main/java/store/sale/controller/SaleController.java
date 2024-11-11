@@ -108,14 +108,15 @@ public class SaleController {
 
     // TODO: 입력값 유효성 검사 책임 분리하기
     private void validateOrderRequest(String orderRequest) {
-        List<String> orderInputs = List.of(orderRequest.split(","));
+        List<String> productOrders = List.of(orderRequest.split(","));
         try {
-            orderInputs.forEach(orderInput -> {
+            productOrders.forEach(orderInput -> {
                 validateProductForm(orderInput);
-                new BigInteger(orderInput.substring(1, orderInput.length()-1).split("-")[1]);
+                List<String> tokens = List.of(orderInput.substring(1, orderInput.length() - 1).split("-"));
+                saleService.validateOrderProducts(tokens);
             });
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 

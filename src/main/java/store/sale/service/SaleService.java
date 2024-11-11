@@ -14,18 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static store.sale.common.InputValidationExceptionCode.QUANTITY_EXCEED;
 import static store.sale.common.SaleExceptionCode.PRODUCT_NOT_FOUND;
 
 public class SaleService {
 
-    private final DateTime dateTime;
     private final ProductRepository productRepository;
-    private final PromotionRepository promotionRepository;
 
-    public SaleService(DateTime dateTime, ProductRepository productRepository, PromotionRepository promotionRepository) {
-        this.dateTime = dateTime;
+    public SaleService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.promotionRepository = promotionRepository;
     }
 
     public List<Product> readProducts() {
@@ -40,6 +37,19 @@ public class SaleService {
             orders.add(new Order(product, new BigInteger(requestToken.getLast())));
         });
         return orders;
+    }
+
+    public void validateOrderProducts(List<String> order) {
+        Product product = productRepository.findByName(order.getFirst())
+                .orElseThrow(() -> new IllegalArgumentException(PRODUCT_NOT_FOUND.message));
+        BigInteger quantity = product.quantity();
+        if (product.getPromotionInventory().isPresent()) {
+            quantity = quantity.add(product.getPromotionInventory().get().quantity());
+        }
+        BigInteger demandAmount = new BigInteger(order.getLast());
+        if (quantity.compareTo(demandAmount) < 0) {
+            throw new IllegalArgumentException(QUANTITY_EXCEED.message);
+        }
     }
 
     public void deleteQuantity(PurchasingPlan plan) {
