@@ -8,7 +8,7 @@ import store.domain.Promotion;
 import store.sale.common.DateTime;
 import store.sale.common.FixedDateTime;
 import store.sale.domain.Order;
-import store.sale.view.ProductAmountDto;
+import store.sale.dto.ProductAmountDto;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -31,9 +31,9 @@ class PurchasingPlanTest {
                 testDateTime(),
                 List.of(new Order(product, BigInteger.valueOf(2)))
         );
-        assertThat(plan.getGetTotal()).isEqualTo(BigInteger.ZERO);
+        assertThat(plan.getPromotionDiscount()).isEqualTo(BigInteger.ZERO);
         plan.addFreeGet(new ProductAmountDto("콜라", BigInteger.ONE));
-        assertThat(plan.getGetTotal()).isEqualTo(BigInteger.valueOf(1000));
+        assertThat(plan.getPromotionDiscount()).isEqualTo(BigInteger.valueOf(1000));
     }
 
     @DisplayName("프로모션 적용 가능하면 재고를 고려하여 최대한 프로모션을 우선적으로 적용하여 지불 금액을 계산한다.")
@@ -49,7 +49,7 @@ class PurchasingPlanTest {
                 testDateTime(),
                 List.of(new Order(product, BigInteger.valueOf(10)))
         );
-        assertThat(plan.getGetTotal()).isEqualTo(2000L);
+        assertThat(plan.getPromotionDiscount()).isEqualTo(2000L);
     }
 
     @DisplayName("정가로 지불할 금액을 계산한다.")
@@ -77,7 +77,7 @@ class PurchasingPlanTest {
                 testDateTime(),
                 List.of(new Order(product, BigInteger.valueOf(3)))
         );
-        assertThat(plan.getGetTotal()).isEqualTo(0L);
+        assertThat(plan.getPromotionDiscount()).isEqualTo(0L);
     }
 
     @DisplayName("프로모션 적용 상품만 구입하려는 경우 미적용 상품은 모두 지운다")

@@ -1,4 +1,4 @@
-package store.sale.view;
+package store.sale.dto;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -40,7 +40,7 @@ public class ReceiptDto {
         builder.append("==============================\n");
         builder.append(String.format("총구매액 %d\t%s\n", buys.size(), df.format(totalPrice)));
         builder.append(String.format("행사할인\t\t-%s\n", df.format(promotionDiscount)));
-        builder.append(String.format("멤버십할인\t\t%s\n", df.format(membershipDiscount)));
+        builder.append(String.format("멤버십할인\t\t-%s\n", df.format(membershipDiscount)));
         builder.append(String.format("내실돈\t\t%s", df.format(result)));
         return builder.toString();
     }

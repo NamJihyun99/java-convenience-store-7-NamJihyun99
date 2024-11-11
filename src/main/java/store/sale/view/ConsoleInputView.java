@@ -1,6 +1,7 @@
 package store.sale.view;
 
 import camp.nextstep.edu.missionutils.Console;
+import store.sale.dto.ProductAmountDto;
 
 import java.math.BigInteger;
 

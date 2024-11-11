@@ -3,11 +3,10 @@ package store.sale.service;
 import store.domain.Inventory;
 import store.domain.Product;
 import store.repository.ProductRepository;
-import store.repository.PromotionRepository;
 import store.sale.common.DateTime;
 import store.sale.domain.Order;
 import store.sale.model.PurchasingPlan;
-import store.sale.view.ProductAmountDto;
+import store.sale.dto.ProductAmountDto;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

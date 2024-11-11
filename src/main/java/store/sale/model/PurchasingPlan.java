@@ -5,10 +5,13 @@ import store.domain.Product;
 import store.domain.Promotion;
 import store.sale.common.DateTime;
 import store.sale.domain.Order;
-import store.sale.view.ProductAmountDto;
+import store.sale.dto.ProductAmountDto;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static store.sale.common.SaleExceptionCode.PROMOTION_NOT_EXISTED;
@@ -49,18 +52,13 @@ public class PurchasingPlan {
         form.addPromotionAmount(form.product.getPromotionQuantity(form.nonPromotionAmount, dateTime));
     }
 
-    public void addNonPromotion(ProductAmountDto dto) {
-        Form form = forms.get(dto.name());
-        form.subtractPromotionAmount(dto.amount());
-    }
-
     public void subtractNonPromotions(String productName) {
         Form form = forms.get(productName);
         form.nonPromotionAmount = BigInteger.ZERO;
     }
 
     public List<ProductAmountDto> promotionQuantityShortages() {
-        return  forms.values().stream()
+        return forms.values().stream()
                 .filter(form -> form.product.getPromotionInventory().isPresent())
                 .filter(form -> form.product.getPromotionInventory().get().promotion().enable(dateTime.now()))
                 .filter(form -> form.nonPromotionAmount.compareTo(BigInteger.ZERO) > 0)
@@ -76,7 +74,7 @@ public class PurchasingPlan {
         return sum;
     }
 
-    public BigInteger getGetTotal() {
+    public BigInteger getPromotionDiscount() {
         BigInteger sum = BigInteger.ZERO;
         for (Form form : forms.values()) {
             sum = sum.add(form.getGetPrice());

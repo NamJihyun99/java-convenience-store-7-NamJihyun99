@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import store.domain.Inventory;
 import store.domain.Product;
 import store.domain.Promotion;
+import store.sale.dto.ProductResponseDto;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
