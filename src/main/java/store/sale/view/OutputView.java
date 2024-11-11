@@ -24,4 +24,8 @@ public class OutputView {
         responses.forEach(responseDto -> builder.append(responseDto.toString()).append("\n"));
         System.out.println(builder);
     }
+
+    public void printReceipt(ReceiptDto receipt) {
+        System.out.println(receipt);
+    }
 }

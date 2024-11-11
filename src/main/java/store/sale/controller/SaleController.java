@@ -4,10 +4,7 @@ import store.sale.common.DateTime;
 import store.sale.domain.Order;
 import store.sale.model.PurchasingPlan;
 import store.sale.service.SaleService;
-import store.sale.view.ConsoleInputView;
-import store.sale.view.OrderRequestParser;
-import store.sale.view.OutputView;
-import store.sale.view.ProductAmountDto;
+import store.sale.view.*;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -57,7 +54,24 @@ public class SaleController {
             if (readMembership().equals("Y")) {
                 plan.applyMembership();
             }
+            outputView.printReceipt(makeReceipt(plan));
+            // 재고 삭감
         } while (readContinueYn().equals("Y"));
+    }
+
+    private ReceiptDto makeReceipt(PurchasingPlan plan) {
+        List<ProductAmountPriceDto> buys = plan.getForms().values().stream().map(form ->
+                new ProductAmountPriceDto(form.getProduct().name(),
+                        form.getPayedAmount(),
+                        form.getPayedAmount().multiply(BigInteger.valueOf(form.getProduct().price()))
+                )
+        ).toList();
+        List<ProductAmountDto> gets = plan.getForms().values().stream().map(form ->
+                new ProductAmountDto(form.getProduct().name(),
+                        form.getUnpayedAmount()
+                )
+        ).toList();
+        return new ReceiptDto(buys, gets, plan.getTotal(), plan.getGetTotal(), plan.getMembershipDiscount());
     }
 
     private String readExtraGet(ProductAmountDto extraGet) {

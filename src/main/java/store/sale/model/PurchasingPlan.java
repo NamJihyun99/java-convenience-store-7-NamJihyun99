@@ -8,10 +8,7 @@ import store.sale.domain.Order;
 import store.sale.view.ProductAmountDto;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static store.sale.common.SaleExceptionCode.PROMOTION_NOT_EXISTED;
 import static store.sale.common.SaleExceptionCode.PROMOTION_UNABLE;
@@ -34,6 +31,10 @@ public class PurchasingPlan {
             }
             forms.put(order.product().name(), form);
         });
+    }
+
+    public Map<String, Form> getForms() {
+        return Collections.unmodifiableMap(forms);
     }
 
     public void applyMembership() {
@@ -101,7 +102,7 @@ public class PurchasingPlan {
         return sum;
     }
 
-    private static class Form {
+    public static class Form {
         Product product;
         BigInteger promotionBuyAmount;
         BigInteger promotionGetAmount;
@@ -112,6 +113,18 @@ public class PurchasingPlan {
             this.promotionBuyAmount = BigInteger.ZERO;
             this.promotionGetAmount = BigInteger.ZERO;
             this.nonPromotionAmount = nonPromotionAmount;
+        }
+
+        public Product getProduct() {
+            return product;
+        }
+
+        public BigInteger getPayedAmount() {
+            return promotionBuyAmount.add(nonPromotionAmount);
+        }
+
+        public BigInteger getUnpayedAmount() {
+            return promotionGetAmount;
         }
 
         void addPromotionAmount(BigInteger totalAmount) {

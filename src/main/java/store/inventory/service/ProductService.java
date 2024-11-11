@@ -35,7 +35,6 @@ public class ProductService {
             Product product = ProductSaveDto.createProduct(productRepository.findByName(dto.name), dto, promotion);
             productRepository.save(product);
         }
-        System.out.println("저장된 상품 개수: "+ productRepository.count());
         return productRepository.count();
     }
 }
