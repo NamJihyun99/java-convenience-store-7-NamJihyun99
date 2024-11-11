@@ -1,4 +1,4 @@
-package store.sale.domain;
+package store.sale.model;
 
 
 import store.domain.Product;
