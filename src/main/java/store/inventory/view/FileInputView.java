@@ -2,8 +2,8 @@ package store.inventory.view;
 
 import store.inventory.file.ProductCsvFileParser;
 import store.inventory.file.PromotionCsvFileParser;
-import store.inventory.file.dto.ProductSaveDto;
-import store.inventory.file.dto.PromotionSaveDto;
+import store.inventory.dto.dto.ProductSaveDto;
+import store.inventory.dto.dto.PromotionSaveDto;
 
 import java.io.IOException;
 import java.util.List;

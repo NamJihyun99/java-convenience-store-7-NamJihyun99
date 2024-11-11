@@ -1,6 +1,6 @@
 package store.inventory.file;
 
-import store.inventory.file.dto.ProductSaveDto;
+import store.inventory.dto.dto.ProductSaveDto;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

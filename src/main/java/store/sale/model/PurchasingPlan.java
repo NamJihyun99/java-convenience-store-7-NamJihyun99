@@ -130,8 +130,7 @@ public class PurchasingPlan {
             return promotionGetAmount;
         }
 
-
-        void addPromotionAmount(BigInteger totalAmount) {
+        private void addPromotionAmount(BigInteger totalAmount) {
             Promotion promotion = validPromotion(totalAmount);
             BigInteger divide = totalAmount.divide(promotion.buy().add(promotion.get()));
             this.promotionBuyAmount = this.promotionBuyAmount.add(promotion.buy().multiply(divide));
@@ -139,15 +138,7 @@ public class PurchasingPlan {
             this.nonPromotionAmount = this.nonPromotionAmount.subtract(totalAmount);
         }
 
-        void subtractPromotionAmount(BigInteger totalAmount) {
-            Promotion promotion = validPromotion(totalAmount);
-            BigInteger divide = totalAmount.divide(promotion.buy().add(promotion.get()));
-            this.promotionBuyAmount = this.promotionBuyAmount.subtract(promotion.buy().multiply(divide));
-            this.promotionGetAmount = this.promotionGetAmount.subtract(promotion.get().multiply(divide));
-            this.nonPromotionAmount = this.nonPromotionAmount.add(totalAmount);
-        }
-
-        void addExtraNonPromotionAmount(BigInteger amount) {
+        private void addExtraNonPromotionAmount(BigInteger amount) {
             this.nonPromotionAmount = this.nonPromotionAmount.add(amount);
         }
 
@@ -161,7 +152,7 @@ public class PurchasingPlan {
             return promotion;
         }
 
-        BigInteger getTotalPrice() {
+        private BigInteger getTotalPrice() {
             BigInteger sum = BigInteger.ZERO;
             if (product.getPromotionInventory().isPresent()) {
                 sum = sum.add(promotionBuyAmount).add(promotionGetAmount).multiply(BigInteger.valueOf(product.price()));
@@ -169,7 +160,7 @@ public class PurchasingPlan {
             return sum.add(nonPromotionAmount.multiply(BigInteger.valueOf(product.price())));
         }
 
-        BigInteger getGetPrice() {
+        private BigInteger getGetPrice() {
             BigInteger sum = BigInteger.ZERO;
             if (product.getPromotionInventory().isPresent()) {
                 sum = sum.add(promotionGetAmount).multiply(BigInteger.valueOf(product.price()));
@@ -177,7 +168,7 @@ public class PurchasingPlan {
             return sum;
         }
 
-        BigInteger getNonPromotionPrice() {
+        private BigInteger getNonPromotionPrice() {
             return nonPromotionAmount.multiply(BigInteger.valueOf(product.price()));
         }
     }

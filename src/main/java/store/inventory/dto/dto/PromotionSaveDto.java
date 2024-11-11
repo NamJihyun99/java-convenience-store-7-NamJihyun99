@@ -1,4 +1,4 @@
-package store.inventory.file.dto;
+package store.inventory.dto.dto;
 
 import store.domain.Promotion;
 
