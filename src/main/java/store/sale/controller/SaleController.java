@@ -77,7 +77,7 @@ public class SaleController {
     private String readExtraGet(ProductAmountDto extraGet) {
         return retryUntilValid(() -> {
             String response = inputView.readPromotionYn(extraGet);
-            validateYn(response);
+            InputValidator.validateYn(response);
             return response;
         });
     }
@@ -93,7 +93,7 @@ public class SaleController {
     private String readNonPromotion(ProductAmountDto shortage) {
         return retryUntilValid(() -> {
             String response = inputView.readNonPromotionYn(shortage.name(), shortage.amount());
-            validateYn(response);
+            InputValidator.validateYn(response);
             return response;
         });
     }
@@ -101,7 +101,7 @@ public class SaleController {
     private String readMembership() {
         return retryUntilValid(() -> {
             String response = inputView.readMembershipYn();
-            validateYn(response);
+            InputValidator.validateYn(response);
             return response;
         });
     }
@@ -109,16 +109,11 @@ public class SaleController {
     private String readContinueYn() {
         return retryUntilValid(() -> {
             String continueYn = inputView.readNextTurnYn();
-            validateYn(continueYn);
+            InputValidator.validateYn(continueYn);
             return continueYn;
         });
     }
 
-    private void validateYn(String response) {
-        if (!response.equals("Y") && !response.equals("N")) {
-            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
-        }
-    }
 
     private <T> T retryUntilValid(Supplier<T> supplier) {
         try {

@@ -11,6 +11,12 @@ import static store.sale.common.InputValidationExceptionCode.QUANTITY_EXCEED;
 
 public class InputValidator {
 
+    public static void validateYn(String response) {
+        if (!response.equals("Y") && !response.equals("N")) {
+            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
+        }
+    }
+
     public static void validateOrderRequest(String orderRequest, SaleService saleService) {
         List<String> productOrders = List.of(orderRequest.split(","));
         try {
