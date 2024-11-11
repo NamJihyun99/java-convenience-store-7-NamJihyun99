@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static store.sale.common.InputValidationExceptionCode.QUANTITY_EXCEED;
 import static store.sale.common.SaleExceptionCode.PRODUCT_NOT_FOUND;
 
 public class SaleService {
@@ -39,17 +38,9 @@ public class SaleService {
         return orders;
     }
 
-    public void validateOrderProducts(List<String> order) {
-        Product product = productRepository.findByName(order.getFirst())
+    public Product findProductByName(String name) {
+        return productRepository.findByName(name)
                 .orElseThrow(() -> new IllegalArgumentException(PRODUCT_NOT_FOUND.message));
-        BigInteger quantity = product.quantity();
-        if (product.getPromotionInventory().isPresent()) {
-            quantity = quantity.add(product.getPromotionInventory().get().quantity());
-        }
-        BigInteger demandAmount = new BigInteger(order.getLast());
-        if (quantity.compareTo(demandAmount) < 0) {
-            throw new IllegalArgumentException(QUANTITY_EXCEED.message);
-        }
     }
 
     public void deleteQuantity(PurchasingPlan plan) {

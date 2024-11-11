@@ -85,7 +85,7 @@ public class SaleController {
     private String readOrderRequest() {
         return retryUntilValid(() -> {
             String orderRequest = inputView.readOrderRequest();
-            validateOrderRequest(orderRequest);
+            InputValidator.validateOrderRequest(orderRequest, saleService);
             return orderRequest;
         });
     }
@@ -104,26 +104,6 @@ public class SaleController {
             validateYn(response);
             return response;
         });
-    }
-
-    // TODO: 입력값 유효성 검사 책임 분리하기
-    private void validateOrderRequest(String orderRequest) {
-        List<String> productOrders = List.of(orderRequest.split(","));
-        try {
-            productOrders.forEach(orderInput -> {
-                validateProductForm(orderInput);
-                List<String> tokens = List.of(orderInput.substring(1, orderInput.length() - 1).split("-"));
-                saleService.validateOrderProducts(tokens);
-            });
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
-
-    private static void validateProductForm(String orderInput) {
-        if (orderInput.charAt(0) != '[' || orderInput.charAt(orderInput.length()-1) != ']') {
-            throw new IllegalArgumentException(INCORRECT_FORMAT.message);
-        }
     }
 
     private String readContinueYn() {
