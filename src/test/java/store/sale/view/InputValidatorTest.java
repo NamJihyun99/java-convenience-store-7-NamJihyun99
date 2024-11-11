@@ -1,15 +1,12 @@
 package store.sale.view;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import store.repository.MemoryProductRepository;
 import store.sale.service.SaleService;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static store.sale.common.InputValidationExceptionCode.INCORRECT_FORMAT;
 
 class InputValidatorTest {
