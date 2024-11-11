@@ -9,6 +9,7 @@ import store.sale.view.ProductAmountDto;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static store.sale.common.SaleExceptionCode.PROMOTION_NOT_EXISTED;
 import static store.sale.common.SaleExceptionCode.PROMOTION_UNABLE;
@@ -27,7 +28,8 @@ public class PurchasingPlan {
         orders.forEach(order -> {
             Form form = new Form(order.product(), order.amount());
             if (order.product().getPromotionInventory().isPresent()) {
-                form.addPromotionAmount(order.product().getPromotionQuantity(order.amount(), dateTime));
+                BigInteger tmp = order.product().getPromotionQuantity(order.amount(), dateTime);
+                form.addPromotionAmount(tmp);
             }
             forms.put(order.product().name(), form);
         });
@@ -58,13 +60,12 @@ public class PurchasingPlan {
     }
 
     public List<ProductAmountDto> promotionQuantityShortages() {
-        List<ProductAmountDto> dtos = new ArrayList<>();
-        forms.values().stream()
+        return  forms.values().stream()
                 .filter(form -> form.product.getPromotionInventory().isPresent())
-                .forEach(form ->
-                        dtos.add(new ProductAmountDto(form.product.name(), form.nonPromotionAmount))
-                );
-        return dtos;
+                .filter(form -> form.product.getPromotionInventory().get().promotion().enable(dateTime.now()))
+                .filter(form -> form.nonPromotionAmount.compareTo(BigInteger.ZERO) > 0)
+                .map(form -> new ProductAmountDto(form.product.name(), form.nonPromotionAmount))
+                .collect(Collectors.toList());
     }
 
     public BigInteger getTotal() {
@@ -119,13 +120,18 @@ public class PurchasingPlan {
             return product;
         }
 
-        public BigInteger getPayedAmount() {
-            return promotionBuyAmount.add(nonPromotionAmount);
+        public BigInteger getPromotionBuyAmount() {
+            return promotionBuyAmount;
+        }
+
+        public BigInteger getNonPromotionAmount() {
+            return nonPromotionAmount;
         }
 
         public BigInteger getUnpayedAmount() {
             return promotionGetAmount;
         }
+
 
         void addPromotionAmount(BigInteger totalAmount) {
             Promotion promotion = validPromotion(totalAmount);

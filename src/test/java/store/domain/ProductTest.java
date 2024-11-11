@@ -21,4 +21,13 @@ public class ProductTest {
         assertThat(product.getPromotionInventory().get()).isInstanceOf(Inventory.class);
     }
 
+    @DisplayName("정가 판매 재고 차감 성공")
+    @Test
+    void subtractQuantity() {
+    }
+
+    @DisplayName("프로모션 판매 재고 차감 성공")
+    @Test
+    void subtractPromotionQuantity() {
+    }
 }

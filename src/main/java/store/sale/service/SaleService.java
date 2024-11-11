@@ -6,6 +6,7 @@ import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
 import store.sale.common.DateTime;
 import store.sale.domain.Order;
+import store.sale.model.PurchasingPlan;
 import store.sale.view.ProductAmountDto;
 
 import java.math.BigInteger;
@@ -39,6 +40,17 @@ public class SaleService {
             orders.add(new Order(product, new BigInteger(requestToken.getLast())));
         });
         return orders;
+    }
+
+    public void deleteQuantity(PurchasingPlan plan) {
+        plan.getForms().values().forEach(form -> {
+            Product product = productRepository.findByName(form.getProduct().name())
+                    .orElseThrow(() -> new IllegalStateException(PRODUCT_NOT_FOUND.message));
+            if (form.getProduct().getPromotionInventory().isPresent()) {
+                product.subtractPromotionQuantity(form.getPromotionBuyAmount().add(form.getUnpayedAmount()));
+            }
+            product.subtractQuantity(form.getNonPromotionAmount());
+        });
     }
 
     public List<ProductAmountDto> getEnableProduct(List<Order> orders, DateTime dateTime) {

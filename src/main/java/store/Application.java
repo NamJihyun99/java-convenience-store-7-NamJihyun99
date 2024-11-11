@@ -9,6 +9,7 @@ import store.repository.MemoryProductRepository;
 import store.repository.MemoryPromotionRepository;
 import store.sale.common.DateTime;
 import store.sale.common.FixedDateTime;
+import store.sale.common.SystemDateTime;
 import store.sale.controller.SaleController;
 import store.sale.service.SaleService;
 import store.sale.view.ConsoleInputView;
@@ -30,12 +31,12 @@ public class Application {
     private static void runStore() {
         ConsoleInputView consoleInputView = new ConsoleInputView();
         OutputView outputView = new OutputView();
+        DateTime dateTime = new SystemDateTime();
         SaleService service = new SaleService(
-                new FixedDateTime(),
+                dateTime,
                 MemoryProductRepository.getInstance(),
                 MemoryPromotionRepository.getInstance()
         );
-        DateTime dateTime = new FixedDateTime();
         SaleController controller = SaleController.create(consoleInputView, outputView, service, dateTime);
         controller.run();
     }

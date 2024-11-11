@@ -55,15 +55,15 @@ public class SaleController {
                 plan.applyMembership();
             }
             outputView.printReceipt(makeReceipt(plan));
-            // 재고 삭감
+            saleService.deleteQuantity(plan);
         } while (readContinueYn().equals("Y"));
     }
 
     private ReceiptDto makeReceipt(PurchasingPlan plan) {
         List<ProductAmountPriceDto> buys = plan.getForms().values().stream().map(form ->
                 new ProductAmountPriceDto(form.getProduct().name(),
-                        form.getPayedAmount(),
-                        form.getPayedAmount().multiply(BigInteger.valueOf(form.getProduct().price()))
+                        form.getPromotionBuyAmount().add(form.getNonPromotionAmount()),
+                        form.getPromotionBuyAmount().add(form.getNonPromotionAmount()).multiply(BigInteger.valueOf(form.getProduct().price()))
                 )
         ).toList();
         List<ProductAmountDto> gets = plan.getForms().values().stream().map(form ->

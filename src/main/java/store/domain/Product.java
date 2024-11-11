@@ -4,8 +4,9 @@ import store.inventory.common.ExceptionCode;
 import store.sale.common.DateTime;
 
 import java.math.BigInteger;
-import java.util.Objects;
 import java.util.Optional;
+
+import static store.sale.common.SaleExceptionCode.AMOUNT_TOO_BIG;
 
 public class Product {
 
@@ -59,16 +60,16 @@ public class Product {
         return promotionInventory.getPromotionQuantity(demand, dateTime);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return Objects.equals(name, product.name);
+    public void subtractQuantity(BigInteger amount) {
+        if (quantity.compareTo(amount) < 0) {
+            throw new IllegalArgumentException(AMOUNT_TOO_BIG.message);
+        }
+        quantity = quantity.subtract(amount);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(name);
+    public void subtractPromotionQuantity(BigInteger amount) {
+        if (this.promotionInventory != null) {
+            this.promotionInventory.deduct(amount);
+        }
     }
 }
